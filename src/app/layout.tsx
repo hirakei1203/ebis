@@ -13,6 +13,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     { id: 1, name: '株式会社トヨタ自動車' },
     { id: 2, name: 'ソニーグループ株式会社' },
     { id: 3, name: '任天堂株式会社' },
+    { id: 4, name: '三菱UFJフィナンシャル・グループ' },
+    { id: 5, name: 'ソフトバンクグループ株式会社' },
+    { id: 6, name: 'キヤノン株式会社' },
+    { id: 7, name: '株式会社日立製作所' },
+    { id: 8, name: 'パナソニック株式会社' },
+    { id: 9, name: '東京海上ホールディングス株式会社' },
+    { id: 10, name: 'セブン&アイ・ホールディングス' },
   ];
 
   return (
@@ -26,8 +33,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="text-2xl font-bold">Ebis</div>
             </div>
 
-            {/* 上部メニュー */}
-            <nav className="flex-1 p-4">
+            {/* 上部メニュー - 高さの3/4を占める */}
+            <nav className="h-3/4 p-4 overflow-y-auto">
               <ul className="space-y-2">
                 <li>
                   <Link href="/" className="flex items-center p-2 rounded hover:bg-gray-700">
@@ -57,18 +64,37 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </ul>
             </nav>
 
-            {/* 履歴セクション（下部） */}
-            <div className="p-4 border-t border-gray-700">
-              <h2 className="text-sm uppercase font-semibold text-gray-400 mb-3">最近の分析履歴</h2>
-              <ul className="space-y-1">
-                {historyItems.map((item) => (
-                  <li key={item.id}>
-                    <Link href={`/analysis/${item.id}`} className="block p-2 text-sm rounded hover:bg-gray-700 truncate">
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            {/* 履歴セクション - 高さの1/4を占める */}
+            <div className="h-1/2 border-t border-gray-700 flex flex-col">
+              <div className="p-4 border-b border-gray-700 bg-gray-750">
+                <h2 className="text-sm uppercase font-semibold text-gray-400">最近の分析履歴</h2>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <ul className="divide-y divide-gray-700">
+                  {historyItems.map((item) => (
+                    <li key={item.id}>
+                      <Link 
+                        href={`/analysis/${item.id}`} 
+                        className="flex items-center px-4 py-3 hover:bg-gray-700 transition-colors"
+                      >
+                        <div className="w-2 h-2 rounded-full bg-blue-500 mr-3"></div>
+                        <span className="text-sm text-gray-300 truncate">{item.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="p-3 border-t border-gray-700">
+                <Link 
+                  href="/history" 
+                  className="flex items-center justify-center text-xs text-gray-400 hover:text-gray-200 py-2"
+                >
+                  <span>すべての履歴を表示</span>
+                  <svg className="w-3 h-3 ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 5L16 12L9 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </Link>
+              </div>
             </div>
           </aside>
 
