@@ -1,15 +1,50 @@
 // /app/page.tsx
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BackgroundParticles from '@/components/ui/BackgroundParticles';
 
 export default function Home() {
   const [companyName, setCompanyName] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // 仮の企業データ
+  const dummyCompanies = [
+    'トヨタ自動車',
+    'ソニーグループ',
+    'ソフトバンクグループ',
+    '任天堂',
+    'パナソニック',
+    '三菱UFJフィナンシャル・グループ',
+    'ファーストリテイリング',
+    '東京海上ホールディングス',
+    '日立製作所',
+    'キーエンス'
+  ];
+
+  useEffect(() => {
+    if (companyName.length > 0) {
+      const filteredSuggestions = dummyCompanies.filter(
+        company => company.toLowerCase().includes(companyName.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions);
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [companyName]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // 検索処理（後で実装）
     console.log('検索:', companyName);
+    setShowSuggestions(false);
+  };
+
+  const handleSelectSuggestion = (suggestion: string) => {
+    setCompanyName(suggestion);
+    setShowSuggestions(false);
   };
 
   return (
@@ -21,7 +56,7 @@ export default function Home() {
         
         <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg mb-8">
           <form onSubmit={handleSearch} className="space-y-4">
-            <div className="space-y-2">
+            <div className="space-y-2 relative">
               <label htmlFor="companyName" className="block text-sm font-medium text-gray-300">
                 企業名
               </label>
@@ -33,6 +68,20 @@ export default function Home() {
                 className="w-full px-4 py-2 bg-gray-700/80 border border-gray-600 rounded-md text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="例: トヨタ自動車"
               />
+              
+              {showSuggestions && suggestions.length > 0 && (
+                <ul className="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
+                  {suggestions.map((suggestion, index) => (
+                    <li 
+                      key={index}
+                      className="px-4 py-2 hover:bg-gray-600 cursor-pointer text-white"
+                      onClick={() => handleSelectSuggestion(suggestion)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             
             <button
