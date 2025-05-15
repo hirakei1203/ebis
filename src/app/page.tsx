@@ -1,9 +1,11 @@
 // /app/page.tsx
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import BackgroundParticles from '@/components/ui/BackgroundParticles';
 
 export default function Home() {
+  const router = useRouter();
   const [companyName, setCompanyName] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -38,8 +40,12 @@ export default function Home() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // 検索処理（後で実装）
-    console.log('検索:', companyName);
     setShowSuggestions(false);
+    
+    // 会社名を指定して分析結果ページへ遷移
+    if (companyName.trim()) {
+      router.push(`/analysis/result?company=${encodeURIComponent(companyName)}`);
+    }
   };
 
   const handleSelectSuggestion = (suggestion: string) => {
