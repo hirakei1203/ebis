@@ -21,23 +21,24 @@ export default function AnalysisResult() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-gray-700/50 p-4 rounded-lg">
               <h3 className="text-lg font-medium mb-3">財務状況</h3>
-              <p className="text-gray-400">データ準備中...</p>
+              <p className="text-gray-400">良いか悪いか、トレンドは？</p>
             </div>
             
             <div className="bg-gray-700/50 p-4 rounded-lg">
-              <h3 className="text-lg font-medium mb-3">業界ポジション</h3>
+              <h3 className="text-lg font-medium mb-3">Positoning ()</h3>
               <p className="text-gray-400">データ準備中...</p>
             </div>
             
             <div className="bg-gray-700/50 p-4 rounded-lg">
               <h3 className="text-lg font-medium mb-3">将来性</h3>
-              <p className="text-gray-400">データ準備中...</p>
+              <p className="text-gray-400">投資すべき、なぜなら..?
+              </p>
             </div>
             
-            <div className="bg-gray-700/50 p-4 rounded-lg">
+            {/* <div className="bg-gray-700/50 p-4 rounded-lg">
               <h3 className="text-lg font-medium mb-3">ビジネスモデル</h3>
               <p className="text-gray-400">データ準備中...</p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
