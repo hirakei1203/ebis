@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             {/* 上部メニュー - 高さの3/4を占める */}
-            <nav className="h-3/4 p-4 overflow-y-auto">
+            <nav className="h-3/4 p-4 flex flex-col">
               <ul className="space-y-2">
                 <li>
                   <Link href="/" className="flex items-center p-2 rounded hover:bg-gray-700">
@@ -62,9 +62,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </Link>
                 </li>
               </ul>
+              
+              {/* 余白を作る */}
+              <div className="flex-grow"></div>
+              
+              {/* ログインボタン - ナビゲーションの一番下に配置 */}
+              <div className="mt-4 pt-4 border-t border-gray-700">
+                <Link href="/login" className="flex items-center p-2 rounded hover:bg-gray-700">
+                  <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M10 17L15 12L10 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M15 12H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  ログイン
+                </Link>
+              </div>
             </nav>
 
-            {/* 履歴セクション - 高さの1/4を占める */}
+            {/* 履歴セクション */}
             <div className="h-1/2 border-t border-gray-700 flex flex-col">
               <div className="p-4 border-b border-gray-700 bg-gray-750">
                 <h2 className="text-sm uppercase font-semibold text-gray-400">最近の分析履歴</h2>
