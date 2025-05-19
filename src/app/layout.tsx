@@ -113,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </aside>
 
-          {/* メインコンテンツ */}
+          {/* Main Content */}
           <main className="flex-1 p-6 overflow-y-auto">{children}</main>
         </div>
       </body>
