@@ -79,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </nav>
 
-            {/* 履歴セクション */}
+            {/* History Section */}
             <div className="h-1/2 border-t border-gray-700 flex flex-col">
               <div className="p-4 border-b border-gray-700 bg-gray-750">
                 <h2 className="text-sm uppercase font-semibold text-gray-400">最近の分析履歴</h2>
