@@ -10,7 +10,7 @@ export default function Home() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // 仮の企業データ
+  // Dummy company data
   const dummyCompanies = [
     'トヨタ自動車',
     'ソニーグループ',
@@ -39,10 +39,10 @@ export default function Home() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // 検索処理（後で実装）
+    // Search process (to be implemented later)
     setShowSuggestions(false);
     
-    // 会社名を指定して分析結果ページへ遷移
+    // Navigate to analysis result page with company name
     if (companyName.trim()) {
       router.push(`/analysis/result?company=${encodeURIComponent(companyName)}`);
     }

@@ -11,7 +11,7 @@ export default function Settings() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // 設定保存処理（後で実装）
+    // Settings save process (to be implemented later)
     console.log('設定保存:', settings);
     alert('設定が保存されました');
   };

@@ -10,7 +10,7 @@ interface HistoryItem {
 }
 
 export default function History() {
-  // ダミーデータ（後で実際のデータソースと入れ替える）
+  // Dummy data (to be replaced with actual data source later)
   const [historyItems, setHistoryItems] = useState<HistoryItem[]>([
     { id: 1, name: '株式会社トヨタ自動車', date: '2023-10-21', industry: '自動車' },
     { id: 2, name: 'ソニーグループ株式会社', date: '2023-10-20', industry: '電機' },

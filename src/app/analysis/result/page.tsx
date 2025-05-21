@@ -19,7 +19,7 @@ export default function AnalysisResult() {
           </p>
         </div>
         
-        {/* タブナビゲーション */}
+        {/* Tab Navigation */}
         <div className="border-b border-gray-700">
           <nav className="flex">
             <button
@@ -55,9 +55,9 @@ export default function AnalysisResult() {
           </nav>
         </div>
         
-        {/* タブコンテンツ */}
+        {/* Tab Content */}
         <div className="p-6">
-          {/* 財務状況タブ */}
+          {/* Finance Tab */}
           {activeTab === 'finance' && (
             <div className="space-y-4">
               <h3 className="text-xl font-medium mb-4">財務状況分析</h3>
@@ -79,7 +79,7 @@ export default function AnalysisResult() {
             </div>
           )}
           
-          {/* ポジショニングタブ */}
+          {/* Positioning Tab */}
           {activeTab === 'positioning' && (
             <div className="space-y-4">
               <h3 className="text-xl font-medium mb-4">市場ポジショニング</h3>
@@ -98,7 +98,7 @@ export default function AnalysisResult() {
             </div>
           )}
           
-          {/* 将来性タブ */}
+          {/* Future Potential Tab */}
           {activeTab === 'future' && (
             <div className="space-y-4">
               <h3 className="text-xl font-medium mb-4">将来性評価</h3>

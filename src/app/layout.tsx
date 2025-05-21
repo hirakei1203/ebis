@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // 履歴データのダミー（後で実際のデータソースと入れ替える）
+  // Dummy history data (to be replaced with actual data source later)
   const historyItems = [
     { id: 1, name: '株式会社トヨタ自動車' },
     { id: 2, name: 'ソニーグループ株式会社' },
@@ -26,14 +26,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ja">
       <body className="bg-gray-900 text-white">
         <div className="flex h-screen">
-          {/* サイドバー/ナビゲーション */}
+          {/* Sidebar/Navigation */}
           <aside className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col h-full">
-            {/* ロゴ部分 */}
+            {/* Logo section */}
             <div className="p-4 border-b border-gray-700">
               <div className="text-2xl font-bold">Ebis</div>
             </div>
 
-            {/* 上部メニュー - 高さの3/4を占める */}
+            {/* Top menu - takes 3/4 of the height */}
             <nav className="h-3/4 p-4 flex flex-col">
               <ul className="space-y-2">
                 <li>
@@ -63,10 +63,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </li>
               </ul>
               
-              {/* 余白を作る */}
+              {/* Create spacing */}
               <div className="flex-grow"></div>
               
-              {/* ログインボタン - ナビゲーションの一番下に配置 */}
+              {/* Login button - placed at the bottom of the navigation */}
               <div className="mt-4 pt-4 border-t border-gray-700">
                 <Link href="/login" className="flex items-center p-2 rounded hover:bg-gray-700">
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -74,12 +74,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <path d="M10 17L15 12L10 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     <path d="M15 12H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  Login
+                  ログイン
                 </Link>
               </div>
             </nav>
 
-            {/* History Section */}
+            {/* History section */}
             <div className="h-1/2 border-t border-gray-700 flex flex-col">
               <div className="p-4 border-b border-gray-700 bg-gray-750">
                 <h2 className="text-sm uppercase font-semibold text-gray-400">最近の分析履歴</h2>
@@ -113,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </aside>
 
-          {/* Main Content */}
+          {/* Main content */}
           <main className="flex-1 p-6 overflow-y-auto">{children}</main>
         </div>
       </body>
