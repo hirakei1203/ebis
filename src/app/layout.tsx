@@ -10,16 +10,16 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // Dummy history data (to be replaced with actual data source later)
   const historyItems = [
-    { id: 1, name: '株式会社トヨタ自動車' },
-    { id: 2, name: 'ソニーグループ株式会社' },
-    { id: 3, name: '任天堂株式会社' },
-    { id: 4, name: '三菱UFJフィナンシャル・グループ' },
-    { id: 5, name: 'ソフトバンクグループ株式会社' },
-    { id: 6, name: 'キヤノン株式会社' },
-    { id: 7, name: '株式会社日立製作所' },
-    { id: 8, name: 'パナソニック株式会社' },
-    { id: 9, name: '東京海上ホールディングス株式会社' },
-    { id: 10, name: 'セブン&アイ・ホールディングス' },
+    { id: 1, name: 'Toyota Motor Corporation' },
+    { id: 2, name: 'Sony Group Corporation' },
+    { id: 3, name: 'Nintendo Co., Ltd.' },
+    { id: 4, name: 'Mitsubishi UFJ Financial Group' },
+    { id: 5, name: 'SoftBank Group Corp.' },
+    { id: 6, name: 'Canon Inc.' },
+    { id: 7, name: 'Hitachi, Ltd.' },
+    { id: 8, name: 'Panasonic Holdings Corporation' },
+    { id: 9, name: 'Tokyo Marine Holdings, Inc.' },
+    { id: 10, name: 'Seven & i Holdings Co., Ltd.' },
   ];
 
   return (

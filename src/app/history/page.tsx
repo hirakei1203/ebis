@@ -12,11 +12,11 @@ interface HistoryItem {
 export default function History() {
   // Dummy data (to be replaced with actual data source later)
   const [historyItems, setHistoryItems] = useState<HistoryItem[]>([
-    { id: 1, name: '株式会社トヨタ自動車', date: '2023-10-21', industry: '自動車' },
-    { id: 2, name: 'ソニーグループ株式会社', date: '2023-10-20', industry: '電機' },
-    { id: 3, name: '任天堂株式会社', date: '2023-10-19', industry: 'ゲーム' },
-    { id: 4, name: '三菱UFJフィナンシャル・グループ', date: '2023-10-18', industry: '金融' },
-    { id: 5, name: 'ソフトバンクグループ株式会社', date: '2023-10-17', industry: '通信' },
+    { id: 1, name: 'Toyota Motor Corporation', date: '2023-10-21', industry: 'Automotive' },
+    { id: 2, name: 'Sony Group Corporation', date: '2023-10-20', industry: 'Electronics' },
+    { id: 3, name: 'Nintendo Co., Ltd.', date: '2023-10-19', industry: 'Gaming' },
+    { id: 4, name: 'Mitsubishi UFJ Financial Group', date: '2023-10-18', industry: 'Finance' },
+    { id: 5, name: 'SoftBank Group Corp.', date: '2023-10-17', industry: 'Telecommunications' },
   ]);
 
   return (

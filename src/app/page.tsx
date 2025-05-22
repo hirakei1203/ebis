@@ -12,16 +12,16 @@ export default function Home() {
 
   // Dummy company data
   const dummyCompanies = [
-    'トヨタ自動車',
-    'ソニーグループ',
-    'ソフトバンクグループ',
-    '任天堂',
-    'パナソニック',
-    '三菱UFJフィナンシャル・グループ',
-    'ファーストリテイリング',
-    '東京海上ホールディングス',
-    '日立製作所',
-    'キーエンス'
+    'Toyota Motor Corporation',
+    'Sony Group Corporation',
+    'SoftBank Group Corp.',
+    'Nintendo Co., Ltd.',
+    'Panasonic Holdings Corporation',
+    'Mitsubishi UFJ Financial Group',
+    'Fast Retailing Co., Ltd.',
+    'Tokyo Marine Holdings',
+    'Hitachi, Ltd.',
+    'Keyence Corporation'
   ];
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function Home() {
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 className="w-full px-4 py-2 bg-gray-700/80 border border-gray-600 rounded-md text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="例: トヨタ自動車"
+                placeholder="Ex: Toyota Motor Corporation"
               />
               
               {showSuggestions && suggestions.length > 0 && (
