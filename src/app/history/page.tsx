@@ -21,12 +21,12 @@ export default function History() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">分析履歴</h1>
+      <h1 className="text-3xl font-bold mb-8">Analysis History</h1>
       
       <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
         <div className="p-4 bg-gray-700 border-b border-gray-600 flex justify-between items-center">
-          <h2 className="text-xl font-semibold">過去の企業分析</h2>
-          <p className="text-sm text-gray-300">{historyItems.length}件の結果</p>
+          <h2 className="text-xl font-semibold">Past Company Analyses</h2>
+          <p className="text-sm text-gray-300">{historyItems.length} results</p>
         </div>
         
         <div className="divide-y divide-gray-700">
@@ -39,11 +39,11 @@ export default function History() {
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-medium text-lg">{item.name}</h3>
-                  <p className="text-gray-400 text-sm">業界: {item.industry}</p>
+                  <p className="text-gray-400 text-sm">Industry: {item.industry}</p>
                 </div>
                 <div className="text-right">
                   <span className="text-gray-300 text-sm block">{item.date}</span>
-                  <span className="text-blue-400 text-sm block mt-1">詳細を見る &rarr;</span>
+                  <span className="text-blue-400 text-sm block mt-1">View Details &rarr;</span>
                 </div>
               </div>
             </Link>
@@ -52,12 +52,12 @@ export default function History() {
         
         {historyItems.length === 0 && (
           <div className="p-8 text-center text-gray-400">
-            <p>分析履歴がありません。</p>
+            <p>No analysis history available.</p>
             <p className="mt-2">
               <Link href="/" className="text-blue-400 hover:underline">
-                企業分析ページ
+                Company Analysis Page
               </Link>
-              から分析を開始してください。
+              to start your first analysis.
             </p>
           </div>
         )}

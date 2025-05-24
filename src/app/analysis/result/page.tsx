@@ -4,18 +4,18 @@ import { useState } from 'react';
 
 export default function AnalysisResult() {
   const searchParams = useSearchParams();
-  const companyName = searchParams.get('company') || '不明';
+  const companyName = searchParams.get('company') || 'Unknown';
   const [activeTab, setActiveTab] = useState('finance'); // finance, positioning, future
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{companyName}の分析結果</h1>
+      <h1 className="text-3xl font-bold mb-8">{companyName} Analysis Results</h1>
       
       <div className="bg-gray-800 rounded-lg shadow-lg">
         <div className="p-6 border-b border-gray-700">
-          <h2 className="text-2xl font-semibold mb-4">企業概要</h2>
+          <h2 className="text-2xl font-semibold mb-4">Company Overview</h2>
           <p className="text-gray-300">
-            {companyName}の分析結果はこちらに表示されます。
+            Analysis results for {companyName} will be displayed here.
           </p>
         </div>
         
@@ -30,7 +30,7 @@ export default function AnalysisResult() {
                   : 'text-gray-400 hover:text-gray-300'
               }`}
             >
-              財務状況
+              Financial Performance
             </button>
             <button
               onClick={() => setActiveTab('positioning')}
@@ -40,7 +40,7 @@ export default function AnalysisResult() {
                   : 'text-gray-400 hover:text-gray-300'
               }`}
             >
-              ポジショニング
+              Market Positioning
             </button>
             <button
               onClick={() => setActiveTab('future')}
@@ -50,7 +50,7 @@ export default function AnalysisResult() {
                   : 'text-gray-400 hover:text-gray-300'
               }`}
             >
-              将来性
+              Future Prospects
             </button>
           </nav>
         </div>
@@ -60,20 +60,20 @@ export default function AnalysisResult() {
           {/* Finance Tab */}
           {activeTab === 'finance' && (
             <div className="space-y-4">
-              <h3 className="text-xl font-medium mb-4">財務状況分析</h3>
+              <h3 className="text-xl font-medium mb-4">Financial Performance Analysis</h3>
               <div className="bg-gray-700/50 p-5 rounded-lg">
-                <h4 className="text-lg font-medium mb-3">収益性</h4>
-                <p className="text-gray-300">良好なトレンドを示しています。直近3年間の売上高は年平均5.2%成長。</p>
+                <h4 className="text-lg font-medium mb-3">Profitability</h4>
+                <p className="text-gray-300">Shows positive trends. Revenue has grown at an average of 5.2% annually over the past 3 years.</p>
                 <div className="h-32 bg-gray-600/50 rounded mt-3 flex items-center justify-center">
-                  <p className="text-gray-400">収益性グラフがここに表示されます</p>
+                  <p className="text-gray-400">Profitability chart will be displayed here</p>
                 </div>
               </div>
               
               <div className="bg-gray-700/50 p-5 rounded-lg">
-                <h4 className="text-lg font-medium mb-3">財務健全性</h4>
-                <p className="text-gray-300">負債比率は業界平均を下回り、安定した財務基盤を持っています。</p>
+                <h4 className="text-lg font-medium mb-3">Financial Health</h4>
+                <p className="text-gray-300">Debt ratio is below industry average, maintaining a stable financial foundation.</p>
                 <div className="h-32 bg-gray-600/50 rounded mt-3 flex items-center justify-center">
-                  <p className="text-gray-400">財務指標がここに表示されます</p>
+                  <p className="text-gray-400">Financial metrics will be displayed here</p>
                 </div>
               </div>
             </div>
@@ -82,18 +82,18 @@ export default function AnalysisResult() {
           {/* Positioning Tab */}
           {activeTab === 'positioning' && (
             <div className="space-y-4">
-              <h3 className="text-xl font-medium mb-4">市場ポジショニング</h3>
+              <h3 className="text-xl font-medium mb-4">Market Positioning</h3>
               <div className="bg-gray-700/50 p-5 rounded-lg">
-                <h4 className="text-lg font-medium mb-3">競合分析</h4>
-                <p className="text-gray-300">業界内でのマーケットシェアは約15%で、上位3社に入っています。</p>
+                <h4 className="text-lg font-medium mb-3">Competitive Analysis</h4>
+                <p className="text-gray-300">Holds approximately 15% market share within the industry, ranking among the top 3 companies.</p>
                 <div className="h-32 bg-gray-600/50 rounded mt-3 flex items-center justify-center">
-                  <p className="text-gray-400">競合比較チャートがここに表示されます</p>
+                  <p className="text-gray-400">Competitive comparison chart will be displayed here</p>
                 </div>
               </div>
               
               <div className="bg-gray-700/50 p-5 rounded-lg">
-                <h4 className="text-lg font-medium mb-3">差別化要因</h4>
-                <p className="text-gray-300">技術革新への積極的な投資と高い顧客満足度が強みとなっています。</p>
+                <h4 className="text-lg font-medium mb-3">Differentiation Factors</h4>
+                <p className="text-gray-300">Aggressive investment in technological innovation and high customer satisfaction are key strengths.</p>
               </div>
             </div>
           )}
@@ -101,24 +101,24 @@ export default function AnalysisResult() {
           {/* Future Potential Tab */}
           {activeTab === 'future' && (
             <div className="space-y-4">
-              <h3 className="text-xl font-medium mb-4">将来性評価</h3>
+              <h3 className="text-xl font-medium mb-4">Future Prospects Assessment</h3>
               <div className="bg-gray-700/50 p-5 rounded-lg">
-                <h4 className="text-lg font-medium mb-3">成長予測</h4>
-                <p className="text-gray-300">新規事業の展開により、今後5年間で年平均7%の成長が見込まれます。</p>
+                <h4 className="text-lg font-medium mb-3">Growth Forecast</h4>
+                <p className="text-gray-300">Expected to achieve an average annual growth of 7% over the next 5 years through expansion into new business areas.</p>
                 <div className="h-32 bg-gray-600/50 rounded mt-3 flex items-center justify-center">
-                  <p className="text-gray-400">将来予測グラフがここに表示されます</p>
+                  <p className="text-gray-400">Future forecast chart will be displayed here</p>
                 </div>
               </div>
               
               <div className="bg-gray-700/50 p-5 rounded-lg">
-                <h4 className="text-lg font-medium mb-3">リスク評価</h4>
-                <p className="text-gray-300">市場の変動に対する耐性は高く、持続可能なビジネスモデルを確立しています。</p>
+                <h4 className="text-lg font-medium mb-3">Risk Assessment</h4>
+                <p className="text-gray-300">High resilience to market fluctuations with an established sustainable business model.</p>
               </div>
               
               <div className="mt-6 p-4 bg-blue-900/30 border border-blue-800 rounded-lg">
-                <h4 className="text-lg font-medium text-blue-400 mb-2">投資判断</h4>
+                <h4 className="text-lg font-medium text-blue-400 mb-2">Investment Recommendation</h4>
                 <p className="text-gray-200">
-                  長期投資に適しています。安定した財務基盤と将来性を考慮すると、ポートフォリオに組み入れる価値があります。
+                  Suitable for long-term investment. Considering the stable financial foundation and future prospects, it's worth including in your portfolio.
                 </p>
               </div>
             </div>

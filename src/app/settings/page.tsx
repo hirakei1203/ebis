@@ -3,31 +3,31 @@ import { useState } from 'react';
 
 export default function Settings() {
   const [settings, setSettings] = useState({
-    analysisDepth: '標準',
+    analysisDepth: 'Standard',
     notifications: true,
     saveHistory: true,
-    language: '日本語',
+    language: 'English',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Settings save process (to be implemented later)
-    console.log('設定保存:', settings);
-    alert('設定が保存されました');
+    console.log('Settings saved:', settings);
+    alert('Settings have been saved');
   };
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">設定</h1>
+      <h1 className="text-3xl font-bold mb-8">Settings</h1>
       
       <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-4">
-              分析の詳細度
+              Analysis Detail Level
             </label>
             <div className="flex space-x-4">
-              {['簡易', '標準', '詳細'].map((option) => (
+              {['Basic', 'Standard', 'Detailed'].map((option) => (
                 <label key={option} className="flex items-center">
                   <input
                     type="radio"
@@ -43,11 +43,11 @@ export default function Settings() {
           </div>
           
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-200">通知設定</h3>
+            <h3 className="text-lg font-medium text-gray-200">Notification Settings</h3>
             
             <div className="flex items-center justify-between">
               <label htmlFor="notifications" className="text-gray-300">
-                通知を受け取る
+                Receive Notifications
               </label>
               <div className="relative inline-block w-10 align-middle select-none">
                 <input
@@ -64,7 +64,7 @@ export default function Settings() {
             
             <div className="flex items-center justify-between">
               <label htmlFor="saveHistory" className="text-gray-300">
-                検索履歴を保存する
+                Save Search History
               </label>
               <div className="relative inline-block w-10 align-middle select-none">
                 <input
@@ -82,7 +82,7 @@ export default function Settings() {
           
           <div>
             <label htmlFor="language" className="block text-sm font-medium text-gray-300 mb-2">
-              言語
+              Language
             </label>
             <select
               id="language"
@@ -100,7 +100,7 @@ export default function Settings() {
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
             >
-              設定を保存
+              Save Settings
             </button>
           </div>
         </form>
