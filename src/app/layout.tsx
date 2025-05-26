@@ -15,7 +15,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     { id: 3, name: 'Nintendo Co., Ltd.' },
     { id: 4, name: 'Mitsubishi UFJ Financial Group' },
     { id: 5, name: 'SoftBank Group Corp.' },
-    { id: 6, name: 'Canon Inc.' },
   ];
 
   return (
