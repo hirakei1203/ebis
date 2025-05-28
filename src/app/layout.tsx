@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Dummy history data (to be replaced with actual data source later)
+  // Dummy history data
   const historyItems = [
     { id: 1, name: 'Toyota Motor Corporation' },
     { id: 2, name: 'Sony Group Corporation' },
