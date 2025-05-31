@@ -16,7 +16,6 @@ export default function History() {
     { id: 2, name: 'Sony Group Corporation', date: '2023-10-20', industry: 'Electronics' },
     { id: 3, name: 'Nintendo Co., Ltd.', date: '2023-10-19', industry: 'Gaming' },
     { id: 4, name: 'Mitsubishi UFJ Financial Group', date: '2023-10-18', industry: 'Finance' },
-    { id: 5, name: 'SoftBank Group Corp.', date: '2023-10-17', industry: 'Telecommunications' },
   ]);
 
   return (
