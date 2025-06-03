@@ -13,7 +13,6 @@ export default function History() {
   const [historyItems, setHistoryItems] = useState<HistoryItem[]>([
     { id: 1, name: 'Toyota Motor Corporation', date: '2023-10-21', industry: 'Automotive' },
     { id: 2, name: 'Sony Group Corporation', date: '2023-10-20', industry: 'Electronics' },
-    { id: 3, name: 'Nintendo Co., Ltd.', date: '2023-10-19', industry: 'Gaming' },
   ]);
 
   return (
