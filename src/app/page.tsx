@@ -4,11 +4,20 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import BackgroundParticles from '@/components/ui/BackgroundParticles';
 
+interface SearchHistory {
+  id: string;
+  companyName: string;
+  timestamp: Date;
+}
+
 export default function Home() {
   const router = useRouter();
   const [companyName, setCompanyName] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   // Dummy company data
   const dummyCompanies = [
@@ -21,36 +30,104 @@ export default function Home() {
     'Fast Retailing Co., Ltd.',
     'Tokyo Marine Holdings',
     'Hitachi, Ltd.',
-    'Keyence Corporation'
+    'Keyence Corporation',
+    'Apple Inc.',
+    'Microsoft Corporation',
+    'Amazon.com Inc.',
+    'Alphabet Inc.',
+    'Tesla Inc.',
+    'Meta Platforms Inc.',
+    'NVIDIA Corporation',
+    'Samsung Electronics',
+    'ASML Holding',
+    'Taiwan Semiconductor'
   ];
+
+  // Load search history from localStorage on component mount
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('companySearchHistory');
+    if (savedHistory) {
+      const parsedHistory = JSON.parse(savedHistory).map((item: any) => ({
+        ...item,
+        timestamp: new Date(item.timestamp)
+      }));
+      setSearchHistory(parsedHistory);
+    }
+  }, []);
 
   useEffect(() => {
     if (companyName.length > 0) {
       const filteredSuggestions = dummyCompanies.filter(
         company => company.toLowerCase().includes(companyName.toLowerCase())
       );
-      setSuggestions(filteredSuggestions);
+      setSuggestions(filteredSuggestions.slice(0, 8)); // Limit to 8 suggestions
       setShowSuggestions(true);
+      setShowHistory(false);
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
     }
   }, [companyName]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Search process (to be implemented later)
-    setShowSuggestions(false);
+  const saveToHistory = (company: string) => {
+    const newHistoryItem: SearchHistory = {
+      id: Date.now().toString(),
+      companyName: company,
+      timestamp: new Date()
+    };
     
-    // Navigate to analysis result page with company name
-    if (companyName.trim()) {
-      router.push(`/analysis/result?company=${encodeURIComponent(companyName)}`);
+    const updatedHistory = [newHistoryItem, ...searchHistory.filter(item => item.companyName !== company)].slice(0, 10);
+    setSearchHistory(updatedHistory);
+    localStorage.setItem('companySearchHistory', JSON.stringify(updatedHistory));
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!companyName.trim()) return;
+
+    setIsLoading(true);
+    setShowSuggestions(false);
+    setShowHistory(false);
+    
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Save to search history
+      saveToHistory(companyName.trim());
+      
+      // Navigate to analysis result page with company name
+      router.push(`/analysis/result?company=${encodeURIComponent(companyName.trim())}`);
+    } catch (error) {
+      console.error('Search failed:', error);
+      setIsLoading(false);
     }
   };
 
   const handleSelectSuggestion = (suggestion: string) => {
     setCompanyName(suggestion);
     setShowSuggestions(false);
+    setShowHistory(false);
+  };
+
+  const handleInputFocus = () => {
+    if (companyName.length === 0 && searchHistory.length > 0) {
+      setShowHistory(true);
+    }
+  };
+
+  const handleInputBlur = () => {
+    // Delay hiding suggestions to allow for clicks
+    setTimeout(() => {
+      setShowSuggestions(false);
+      setShowHistory(false);
+    }, 200);
+  };
+
+  const clearHistory = () => {
+    setSearchHistory([]);
+    localStorage.removeItem('companySearchHistory');
+    setShowHistory(false);
   };
 
   return (
@@ -66,35 +143,94 @@ export default function Home() {
               <label htmlFor="companyName" className="block text-sm font-medium text-gray-300">
                 Company Name
               </label>
-              <input
-                id="companyName"
-                type="text"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                className="w-full px-4 py-2 bg-gray-700/80 border border-gray-600 rounded-md text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Ex: Toyota Motor Corporation"
-              />
+              <div className="relative">
+                <input
+                  id="companyName"
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  onFocus={handleInputFocus}
+                  onBlur={handleInputBlur}
+                  disabled={isLoading}
+                  className="w-full px-4 py-2 bg-gray-700/80 border border-gray-600 rounded-md text-white focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  placeholder="Ex: Toyota Motor Corporation"
+                />
+                {isLoading && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
+                  </div>
+                )}
+              </div>
               
+              {/* Suggestions dropdown */}
               {showSuggestions && suggestions.length > 0 && (
-                <ul className="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
+                <ul className="absolute z-20 w-full mt-1 bg-gray-700 border border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
                   {suggestions.map((suggestion, index) => (
                     <li 
                       key={index}
-                      className="px-4 py-2 hover:bg-gray-600 cursor-pointer text-white"
+                      className="px-4 py-2 hover:bg-gray-600 cursor-pointer text-white border-b border-gray-600 last:border-b-0"
                       onClick={() => handleSelectSuggestion(suggestion)}
                     >
-                      {suggestion}
+                      <div className="flex items-center">
+                        <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        {suggestion}
+                      </div>
                     </li>
                   ))}
                 </ul>
+              )}
+
+              {/* Search history dropdown */}
+              {showHistory && searchHistory.length > 0 && (
+                <div className="absolute z-20 w-full mt-1 bg-gray-700 border border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
+                  <div className="px-4 py-2 bg-gray-600 text-gray-300 text-sm font-medium flex justify-between items-center">
+                    <span>Recent Searches</span>
+                    <button
+                      type="button"
+                      onClick={clearHistory}
+                      className="text-xs text-gray-400 hover:text-gray-200"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  {searchHistory.map((item) => (
+                    <div
+                      key={item.id}
+                      className="px-4 py-2 hover:bg-gray-600 cursor-pointer text-white border-b border-gray-600 last:border-b-0"
+                      onClick={() => handleSelectSuggestion(item.companyName)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>{item.companyName}</span>
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          {item.timestamp.toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
             
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+              disabled={isLoading || !companyName.trim()}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center"
             >
-              Start AI Analysis
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Analyzing...
+                </>
+              ) : (
+                'Start AI Analysis'
+              )}
             </button>
           </form>
         </div>
