@@ -3,44 +3,47 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import BackgroundParticles from '@/components/ui/BackgroundParticles';
+import { searchCompanies } from '@/services/alphaVantageApi';
 
 interface SearchHistory {
   id: string;
   companyName: string;
+  symbol?: string;
   timestamp: Date;
+}
+
+interface CompanySuggestion {
+  symbol: string;
+  name: string;
 }
 
 export default function Home() {
   const router = useRouter();
   const [companyName, setCompanyName] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<CompanySuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([]);
   const [showHistory, setShowHistory] = useState(false);
 
-  // Dummy company data
+  // Dummy company data (fallback)
   const dummyCompanies = [
-    'Toyota Motor Corporation',
-    'Sony Group Corporation',
-    'SoftBank Group Corp.',
-    'Nintendo Co., Ltd.',
-    'Panasonic Holdings Corporation',
-    'Mitsubishi UFJ Financial Group',
-    'Fast Retailing Co., Ltd.',
-    'Tokyo Marine Holdings',
-    'Hitachi, Ltd.',
-    'Keyence Corporation',
-    'Apple Inc.',
-    'Microsoft Corporation',
-    'Amazon.com Inc.',
-    'Alphabet Inc.',
-    'Tesla Inc.',
-    'Meta Platforms Inc.',
-    'NVIDIA Corporation',
-    'Samsung Electronics',
-    'ASML Holding',
-    'Taiwan Semiconductor'
+    { symbol: 'AAPL', name: 'Apple Inc.' },
+    { symbol: 'MSFT', name: 'Microsoft Corporation' },
+    { symbol: 'GOOGL', name: 'Alphabet Inc.' },
+    { symbol: 'AMZN', name: 'Amazon.com Inc.' },
+    { symbol: 'TSLA', name: 'Tesla Inc.' },
+    { symbol: 'META', name: 'Meta Platforms Inc.' },
+    { symbol: 'NVDA', name: 'NVIDIA Corporation' },
+    { symbol: 'IBM', name: 'International Business Machines Corporation' },
+    { symbol: 'ORCL', name: 'Oracle Corporation' },
+    { symbol: 'CRM', name: 'Salesforce Inc.' },
+    { symbol: '7203.T', name: 'Toyota Motor Corporation' },
+    { symbol: '6758.T', name: 'Sony Group Corporation' },
+    { symbol: '9984.T', name: 'SoftBank Group Corp.' },
+    { symbol: '7974.T', name: 'Nintendo Co., Ltd.' },
+    { symbol: '6752.T', name: 'Panasonic Holdings Corporation' }
   ];
 
   // Load search history from localStorage on component mount
@@ -55,24 +58,58 @@ export default function Home() {
     }
   }, []);
 
+  // Search for companies using Alpha Vantage API
   useEffect(() => {
-    if (companyName.length > 0) {
-      const filteredSuggestions = dummyCompanies.filter(
-        company => company.toLowerCase().includes(companyName.toLowerCase())
-      );
-      setSuggestions(filteredSuggestions.slice(0, 8)); // Limit to 8 suggestions
-      setShowSuggestions(true);
-      setShowHistory(false);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
+    const searchWithAPI = async () => {
+      if (companyName.length > 2) {
+        setIsSearching(true);
+        try {
+          // Try API search first
+          const apiResults = await searchCompanies(companyName);
+          
+          if (apiResults.length > 0) {
+            setSuggestions(apiResults);
+          } else {
+            // Fallback to dummy data if API fails or returns no results
+            const filteredSuggestions = dummyCompanies.filter(
+              company => 
+                company.name.toLowerCase().includes(companyName.toLowerCase()) ||
+                company.symbol.toLowerCase().includes(companyName.toLowerCase())
+            );
+            setSuggestions(filteredSuggestions);
+          }
+          
+          setShowSuggestions(true);
+          setShowHistory(false);
+        } catch (error) {
+          console.error('Search error:', error);
+          // Fallback to dummy data on error
+          const filteredSuggestions = dummyCompanies.filter(
+            company => 
+              company.name.toLowerCase().includes(companyName.toLowerCase()) ||
+              company.symbol.toLowerCase().includes(companyName.toLowerCase())
+          );
+          setSuggestions(filteredSuggestions);
+          setShowSuggestions(true);
+          setShowHistory(false);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    };
+
+    const timeoutId = setTimeout(searchWithAPI, 300); // Debounce search
+    return () => clearTimeout(timeoutId);
   }, [companyName]);
 
-  const saveToHistory = (company: string) => {
+  const saveToHistory = (company: string, symbol?: string) => {
     const newHistoryItem: SearchHistory = {
       id: Date.now().toString(),
       companyName: company,
+      symbol: symbol,
       timestamp: new Date()
     };
     
@@ -93,19 +130,31 @@ export default function Home() {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Save to search history
-      saveToHistory(companyName.trim());
+      // Try to find symbol from suggestions
+      const selectedSuggestion = suggestions.find(s => 
+        s.name.toLowerCase() === companyName.toLowerCase() ||
+        s.symbol.toLowerCase() === companyName.toLowerCase()
+      );
       
-      // Navigate to analysis result page with company name
-      router.push(`/analysis/result?company=${encodeURIComponent(companyName.trim())}`);
+      // Save to search history
+      saveToHistory(companyName.trim(), selectedSuggestion?.symbol);
+      
+      // Navigate to analysis result page with company name and symbol
+      const queryParams = new URLSearchParams({
+        company: companyName.trim(),
+        ...(selectedSuggestion?.symbol && { symbol: selectedSuggestion.symbol })
+      });
+      
+      router.push(`/analysis/result?${queryParams.toString()}`);
     } catch (error) {
       console.error('Search failed:', error);
       setIsLoading(false);
     }
   };
 
-  const handleSelectSuggestion = (suggestion: string) => {
-    setCompanyName(suggestion);
+  const handleSelectSuggestion = (suggestion: CompanySuggestion) => {
+    setCompanyName(suggestion.name);
+    setSuggestions([suggestion]); // Keep the selected suggestion for symbol reference
     setShowSuggestions(false);
     setShowHistory(false);
   };
@@ -141,7 +190,7 @@ export default function Home() {
           <form onSubmit={handleSearch} className="space-y-4">
             <div className="space-y-2 relative">
               <label htmlFor="companyName" className="block text-sm font-medium text-gray-300">
-                Company Name
+                Company Name or Symbol
               </label>
               <div className="relative">
                 <input
@@ -153,9 +202,9 @@ export default function Home() {
                   onBlur={handleInputBlur}
                   disabled={isLoading}
                   className="w-full px-4 py-2 bg-gray-700/80 border border-gray-600 rounded-md text-white focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Ex: Toyota Motor Corporation"
+                  placeholder="Ex: Apple Inc. or AAPL"
                 />
-                {isLoading && (
+                {(isLoading || isSearching) && (
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
                   </div>
@@ -171,11 +220,16 @@ export default function Home() {
                       className="px-4 py-2 hover:bg-gray-600 cursor-pointer text-white border-b border-gray-600 last:border-b-0"
                       onClick={() => handleSelectSuggestion(suggestion)}
                     >
-                      <div className="flex items-center">
-                        <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        {suggestion}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
+                          <div>
+                            <div className="font-medium">{suggestion.name}</div>
+                            <div className="text-sm text-gray-400">{suggestion.symbol}</div>
+                          </div>
+                        </div>
                       </div>
                     </li>
                   ))}
@@ -199,14 +253,17 @@ export default function Home() {
                     <div
                       key={item.id}
                       className="px-4 py-2 hover:bg-gray-600 cursor-pointer text-white border-b border-gray-600 last:border-b-0"
-                      onClick={() => handleSelectSuggestion(item.companyName)}
+                      onClick={() => setCompanyName(item.companyName)}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          <span>{item.companyName}</span>
+                          <div>
+                            <span>{item.companyName}</span>
+                            {item.symbol && <span className="text-sm text-gray-400 ml-2">({item.symbol})</span>}
+                          </div>
                         </div>
                         <span className="text-xs text-gray-400">
                           {item.timestamp.toLocaleDateString()}
@@ -236,14 +293,16 @@ export default function Home() {
         </div>
         
         <div className="bg-gray-800/60 backdrop-blur-sm rounded-lg p-6 text-gray-300 text-sm space-y-2">
-          <p>Enter a company name to search, and AI will comprehensively analyze:</p>
+          <p>Enter a company name or stock symbol to search, and AI will comprehensively analyze:</p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>Financial Performance</li>
-            <li>Industry Position</li>
-            <li>Future Prospects</li>
-            <li>Business Model</li>
+            <li>Real-time Stock Performance</li>
+            <li>Financial Health & Metrics</li>
+            <li>Market Position & Competition</li>
+            <li>Future Growth Prospects</li>
           </ul>
-          <p>and provide a comprehensive analysis.</p>
+          <p className="text-xs text-gray-400 mt-3">
+            * Powered by Alpha Vantage API for real-time financial data
+          </p>
         </div>
       </div>
     </>
