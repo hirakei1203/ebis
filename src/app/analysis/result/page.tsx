@@ -113,6 +113,62 @@ export default function AnalysisResult() {
     fetchData();
   }, [companyName, symbol]);
 
+  // Save analysis to history when data is loaded
+  useEffect(() => {
+    if (!isLoading && investmentScores.length > 0) {
+      const saveToHistory = () => {
+        try {
+          const overallScore = calculateOverallScore();
+          const recommendation = getRecommendation(overallScore);
+          
+          const analysisResult = {
+            id: Date.now().toString(),
+            companyName,
+            symbol: symbol || undefined,
+            sector: companyOverview?.sector,
+            industry: companyOverview?.industry,
+            currentPrice: stockQuote?.price,
+            priceChange: stockQuote?.change,
+            priceChangePercent: stockQuote?.changePercent,
+            investmentScores,
+            overallScore,
+            recommendation: recommendation.text,
+            recommendationColor: recommendation.color,
+            analysisDate: new Date(),
+            isFavorite: false
+          };
+
+          // Get existing history
+          const existingHistory = localStorage.getItem('analysisHistory');
+          let history = existingHistory ? JSON.parse(existingHistory) : [];
+
+          // Check if this analysis already exists (same company and recent date)
+          const existingIndex = history.findIndex((item: any) => 
+            item.companyName === companyName && 
+            item.symbol === symbol &&
+            new Date(item.analysisDate).toDateString() === new Date().toDateString()
+          );
+
+          if (existingIndex >= 0) {
+            // Update existing analysis
+            history[existingIndex] = analysisResult;
+          } else {
+            // Add new analysis to the beginning
+            history.unshift(analysisResult);
+            // Keep only the latest 50 analyses
+            history = history.slice(0, 50);
+          }
+
+          localStorage.setItem('analysisHistory', JSON.stringify(history));
+        } catch (error) {
+          console.error('Error saving to history:', error);
+        }
+      };
+
+      saveToHistory();
+    }
+  }, [isLoading, investmentScores, companyName, symbol, stockQuote, companyOverview]);
+
   const calculateOverallScore = () => {
     if (investmentScores.length === 0) return 0;
     const totalScore = investmentScores.reduce((sum, score) => sum + score.score, 0);
