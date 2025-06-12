@@ -42,13 +42,13 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">ログインが必要です</h1>
-          <p className="text-gray-400 mb-6">このページにアクセスするにはログインしてください。</p>
+          <h1 className="text-2xl font-bold text-white mb-4">Login Required</h1>
+          <p className="text-gray-400 mb-6">Please log in to access this page.</p>
           <Link 
             href="/login"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md"
           >
-            ログインページへ
+            Go to Login
           </Link>
         </div>
       </div>

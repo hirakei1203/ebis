@@ -24,7 +24,7 @@ export default function Navbar() {
                 pathname === '/' ? 'bg-gray-700 text-white' : ''
               }`}
             >
-              企業分析
+              Company Analysis
             </Link>
 
             {isAuthenticated && (
@@ -35,7 +35,7 @@ export default function Navbar() {
                     pathname === '/history' ? 'bg-gray-700 text-white' : ''
                   }`}
                 >
-                  分析履歴
+                  Analysis History
                 </Link>
                 <Link 
                   href="/settings" 
@@ -43,7 +43,7 @@ export default function Navbar() {
                     pathname === '/settings' ? 'bg-gray-700 text-white' : ''
                   }`}
                 >
-                  設定
+                  Settings
                 </Link>
               </>
             )}
@@ -72,7 +72,7 @@ export default function Navbar() {
                     onClick={logout}
                     className="text-gray-300 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium"
                   >
-                    ログアウト
+                    Logout
                   </button>
                 </div>
               ) : (
@@ -81,13 +81,13 @@ export default function Navbar() {
                     href="/login"
                     className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                   >
-                    ログイン
+                    Login
                   </Link>
                   <Link 
                     href="/register"
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
                   >
-                    新規登録
+                    Sign Up
                   </Link>
                 </div>
               )}
