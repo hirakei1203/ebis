@@ -26,6 +26,16 @@ interface AnalysisResult {
   isFavorite: boolean;
 }
 
+interface SearchLimit {
+  count: number;
+  date: string;
+}
+
+interface User {
+  isLoggedIn: boolean;
+  searchLimit: number;
+}
+
 export default function History() {
   const [analysisHistory, setAnalysisHistory] = useState<AnalysisResult[]>([]);
   const [filteredHistory, setFilteredHistory] = useState<AnalysisResult[]>([]);
@@ -33,6 +43,9 @@ export default function History() {
   const [sortBy, setSortBy] = useState<'date' | 'score' | 'name'>('date');
   const [filterBy, setFilterBy] = useState<'all' | 'favorites' | 'buy' | 'hold' | 'sell'>('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [searchLimit, setSearchLimit] = useState<SearchLimit>({ count: 0, date: new Date().toDateString() });
+  const [showSearchLimitWarning, setShowSearchLimitWarning] = useState(false);
+  const [user, setUser] = useState<User>({ isLoggedIn: false, searchLimit: 100 });
 
   // Load analysis history from localStorage
   useEffect(() => {
@@ -200,6 +213,62 @@ export default function History() {
     return 'text-red-400';
   };
 
+  // ユーザー情報を取得
+  useEffect(() => {
+    const checkUserStatus = async () => {
+      try {
+        // ここで実際の認証APIを呼び出す
+        const userInfo = localStorage.getItem('userInfo');
+        if (userInfo) {
+          const parsedUser = JSON.parse(userInfo);
+          setUser({
+            isLoggedIn: true,
+            searchLimit: parsedUser.isPremium ? 1000 : 500 // プレミアムユーザーは1000回、通常ユーザーは500回
+          });
+        }
+      } catch (error) {
+        console.error('Error checking user status:', error);
+      }
+    };
+
+    checkUserStatus();
+  }, []);
+
+  // 検索回数の制限をチェックする関数
+  const checkSearchLimit = () => {
+    const today = new Date().toDateString();
+    const savedLimit = localStorage.getItem('searchLimit');
+    let currentLimit: SearchLimit;
+
+    if (savedLimit) {
+      currentLimit = JSON.parse(savedLimit);
+      if (currentLimit.date !== today) {
+        currentLimit = { count: 0, date: today };
+      }
+    } else {
+      currentLimit = { count: 0, date: today };
+    }
+
+    if (currentLimit.count >= user.searchLimit) {
+      setShowSearchLimitWarning(true);
+      return false;
+    }
+
+    currentLimit.count += 1;
+    localStorage.setItem('searchLimit', JSON.stringify(currentLimit));
+    setSearchLimit(currentLimit);
+    return true;
+  };
+
+  // 検索処理を更新
+  const handleSearch = (value: string) => {
+    if (value && !checkSearchLimit()) {
+      return;
+    }
+    setSearchTerm(value);
+    setShowSearchLimitWarning(false);
+  };
+
   if (isLoading) {
     return (
       <div className="max-w-6xl mx-auto">
@@ -233,13 +302,32 @@ export default function History() {
           {/* Search */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Search</label>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Company name, symbol, or sector..."
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-blue-500 focus:border-blue-500"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder="Company name, symbol, or sector..."
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-blue-500 focus:border-blue-500"
+              />
+              {showSearchLimitWarning && (
+                <div className="absolute top-full left-0 mt-1 p-2 bg-red-500 text-white text-sm rounded">
+                  {user.isLoggedIn 
+                    ? `本日の検索回数制限（${user.searchLimit}回）に達しました。`
+                    : '本日の検索回数制限（100回）に達しました。ログインすると制限が緩和されます。'}
+                </div>
+              )}
+            </div>
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-xs text-gray-400">
+                残り検索回数: {user.searchLimit - searchLimit.count}回
+              </p>
+              {!user.isLoggedIn && (
+                <Link href="/login" className="text-xs text-blue-400 hover:text-blue-300">
+                  ログインして制限を緩和
+                </Link>
+              )}
+            </div>
           </div>
 
           {/* Sort By */}
