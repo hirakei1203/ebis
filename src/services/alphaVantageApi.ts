@@ -1,6 +1,5 @@
 // Alpha Vantage API Service
-// デモ用のAPIキー（実際の使用時は環境変数に設定してください）
-const API_KEY = 'demo'; // 'demo'キーは制限されたデータのみ取得可能
+const API_KEY = process.env.NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY || 'demo';
 
 const BASE_URL = 'https://www.alphavantage.co/query';
 
