@@ -68,10 +68,8 @@ export default function Home() {
           const apiResults = await searchCompanies(companyName);
           
           if (apiResults.length > 0) {
-            alert("API success!")
             setSuggestions(apiResults);
           } else {
-            alert("API failed!")
             // Fallback to dummy data if API fails or returns no results
             const filteredSuggestions = dummyCompanies.filter(
               company => 
@@ -84,7 +82,6 @@ export default function Home() {
           setShowSuggestions(true);
           setShowHistory(false);
         } catch (error) {
-          alert("API error!")
           // Fallback to dummy data on error
           const filteredSuggestions = dummyCompanies.filter(
             company => 
