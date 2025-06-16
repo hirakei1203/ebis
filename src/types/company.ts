@@ -1,0 +1,31 @@
+export interface CompanyOverview {
+  symbol: string;
+  name: string;
+  description: string;
+  sector: string;
+  industry: string;
+  marketCap: number;
+  peRatio: number;
+  pegRatio: number;
+  bookValue: number;
+  dividendYield: number;
+  eps: number;
+  revenuePerShare: number;
+  profitMargin: number;
+  operatingMargin: number;
+  returnOnAssets: number;
+  returnOnEquity: number;
+  revenue: number;
+  grossProfit: number;
+  dilutedEPS: number;
+  quarterlyEarningsGrowth: number;
+  quarterlyRevenueGrowth: number;
+  analystTargetPrice: number;
+  trailingPE: number;
+  forwardPE: number;
+  beta: number;
+  debtToEquity: number;
+  currentRatio: number;
+  priceToBook: number;
+  priceToSales: number;
+} 

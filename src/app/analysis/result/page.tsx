@@ -27,6 +27,12 @@ interface InvestmentScore {
   score: number;
   maxScore: number;
   description: string;
+  metrics?: {
+    name: string;
+    value: number;
+    benchmark: number;
+    unit: string;
+  }[];
 }
 
 export default function AnalysisResult() {
@@ -79,11 +85,62 @@ export default function AnalysisResult() {
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         const scores: InvestmentScore[] = [
-          { category: 'Financial Health', score: 8.5, maxScore: 10, description: 'Strong balance sheet with low debt' },
-          { category: 'Growth Potential', score: 7.2, maxScore: 10, description: 'Moderate growth expected in core markets' },
-          { category: 'Market Position', score: 8.8, maxScore: 10, description: 'Leading position in key segments' },
-          { category: 'Risk Assessment', score: 7.5, maxScore: 10, description: 'Well-diversified business model' },
-          { category: 'Valuation', score: 6.8, maxScore: 10, description: 'Fairly valued with some upside potential' }
+          {
+            category: 'Financial Health',
+            score: 8.5,
+            maxScore: 10,
+            description: 'Strong balance sheet with low debt',
+            metrics: [
+              { name: 'P/E Ratio', value: companyOverview?.peRatio || 0, benchmark: 20, unit: '' },
+              { name: 'ROE', value: (companyOverview?.returnOnEquity || 0) * 100, benchmark: 12, unit: '%' },
+              { name: 'ROA', value: (companyOverview?.returnOnAssets || 0) * 100, benchmark: 5, unit: '%' },
+              { name: 'Debt/Equity', value: companyOverview?.debtToEquity || 0, benchmark: 1.5, unit: '' }
+            ]
+          },
+          {
+            category: 'Growth Potential',
+            score: 7.2,
+            maxScore: 10,
+            description: 'Moderate growth expected in core markets',
+            metrics: [
+              { name: 'Revenue Growth', value: (companyOverview?.quarterlyRevenueGrowth || 0) * 100, benchmark: 10, unit: '%' },
+              { name: 'EPS Growth', value: (companyOverview?.quarterlyEarningsGrowth || 0) * 100, benchmark: 8, unit: '%' },
+              { name: 'Profit Margin', value: (companyOverview?.profitMargin || 0) * 100, benchmark: 8, unit: '%' }
+            ]
+          },
+          {
+            category: 'Market Position',
+            score: 8.8,
+            maxScore: 10,
+            description: 'Leading position in key segments',
+            metrics: [
+              { name: 'Market Cap', value: (companyOverview?.marketCap || 0) / 1000000000, benchmark: 10, unit: 'B' },
+              { name: 'PEG Ratio', value: companyOverview?.pegRatio || 0, benchmark: 1.5, unit: '' },
+              { name: 'Dividend Yield', value: (companyOverview?.dividendYield || 0) * 100, benchmark: 2, unit: '%' }
+            ]
+          },
+          {
+            category: 'Risk Assessment',
+            score: 7.5,
+            maxScore: 10,
+            description: 'Well-diversified business model',
+            metrics: [
+              { name: 'Beta', value: companyOverview?.beta || 1, benchmark: 1, unit: '' },
+              { name: 'Operating Margin', value: (companyOverview?.operatingMargin || 0) * 100, benchmark: 15, unit: '%' },
+              { name: 'Current Ratio', value: companyOverview?.currentRatio || 0, benchmark: 1.5, unit: '' }
+            ]
+          },
+          {
+            category: 'Valuation',
+            score: 6.8,
+            maxScore: 10,
+            description: 'Fairly valued with some upside potential',
+            metrics: [
+              { name: 'Forward P/E', value: companyOverview?.forwardPE || 0, benchmark: 15, unit: '' },
+              { name: 'Price/Book', value: companyOverview?.priceToBook || 0, benchmark: 2, unit: '' },
+              { name: 'Price/Sales', value: companyOverview?.priceToSales || 0, benchmark: 2, unit: '' }
+            ]
+          }
         ];
         
         setInvestmentScores(scores);
@@ -98,11 +155,62 @@ export default function AnalysisResult() {
         setCompanyOverview(demoData.overview as CompanyOverview);
         
         const scores: InvestmentScore[] = [
-          { category: 'Financial Health', score: 8.5, maxScore: 10, description: 'Strong balance sheet with low debt' },
-          { category: 'Growth Potential', score: 7.2, maxScore: 10, description: 'Moderate growth expected in core markets' },
-          { category: 'Market Position', score: 8.8, maxScore: 10, description: 'Leading position in key segments' },
-          { category: 'Risk Assessment', score: 7.5, maxScore: 10, description: 'Well-diversified business model' },
-          { category: 'Valuation', score: 6.8, maxScore: 10, description: 'Fairly valued with some upside potential' }
+          {
+            category: 'Financial Health',
+            score: 8.5,
+            maxScore: 10,
+            description: 'Strong balance sheet with low debt',
+            metrics: [
+              { name: 'P/E Ratio', value: companyOverview?.peRatio || 0, benchmark: 20, unit: '' },
+              { name: 'ROE', value: (companyOverview?.returnOnEquity || 0) * 100, benchmark: 12, unit: '%' },
+              { name: 'ROA', value: (companyOverview?.returnOnAssets || 0) * 100, benchmark: 5, unit: '%' },
+              { name: 'Debt/Equity', value: companyOverview?.debtToEquity || 0, benchmark: 1.5, unit: '' }
+            ]
+          },
+          {
+            category: 'Growth Potential',
+            score: 7.2,
+            maxScore: 10,
+            description: 'Moderate growth expected in core markets',
+            metrics: [
+              { name: 'Revenue Growth', value: (companyOverview?.quarterlyRevenueGrowth || 0) * 100, benchmark: 10, unit: '%' },
+              { name: 'EPS Growth', value: (companyOverview?.quarterlyEarningsGrowth || 0) * 100, benchmark: 8, unit: '%' },
+              { name: 'Profit Margin', value: (companyOverview?.profitMargin || 0) * 100, benchmark: 8, unit: '%' }
+            ]
+          },
+          {
+            category: 'Market Position',
+            score: 8.8,
+            maxScore: 10,
+            description: 'Leading position in key segments',
+            metrics: [
+              { name: 'Market Cap', value: (companyOverview?.marketCap || 0) / 1000000000, benchmark: 10, unit: 'B' },
+              { name: 'PEG Ratio', value: companyOverview?.pegRatio || 0, benchmark: 1.5, unit: '' },
+              { name: 'Dividend Yield', value: (companyOverview?.dividendYield || 0) * 100, benchmark: 2, unit: '%' }
+            ]
+          },
+          {
+            category: 'Risk Assessment',
+            score: 7.5,
+            maxScore: 10,
+            description: 'Well-diversified business model',
+            metrics: [
+              { name: 'Beta', value: companyOverview?.beta || 1, benchmark: 1, unit: '' },
+              { name: 'Operating Margin', value: (companyOverview?.operatingMargin || 0) * 100, benchmark: 15, unit: '%' },
+              { name: 'Current Ratio', value: companyOverview?.currentRatio || 0, benchmark: 1.5, unit: '' }
+            ]
+          },
+          {
+            category: 'Valuation',
+            score: 6.8,
+            maxScore: 10,
+            description: 'Fairly valued with some upside potential',
+            metrics: [
+              { name: 'Forward P/E', value: companyOverview?.forwardPE || 0, benchmark: 15, unit: '' },
+              { name: 'Price/Book', value: companyOverview?.priceToBook || 0, benchmark: 2, unit: '' },
+              { name: 'Price/Sales', value: companyOverview?.priceToSales || 0, benchmark: 2, unit: '' }
+            ]
+          }
         ];
         setInvestmentScores(scores);
       } finally {
@@ -284,6 +392,30 @@ export default function AnalysisResult() {
                 ></div>
               </div>
               <p className="text-xs text-gray-400 mt-2">{score.description}</p>
+              
+              {score.metrics && (
+                <div className="mt-4 space-y-2">
+                  {score.metrics.map((metric, mIndex) => (
+                    <div key={mIndex} className="text-xs">
+                      <div className="flex justify-between text-gray-300">
+                        <span>{metric.name}</span>
+                        <span>{metric.value.toFixed(2)}{metric.unit}</span>
+                      </div>
+                      <div className="w-full bg-gray-600 rounded-full h-1 mt-1">
+                        <div 
+                          className={`h-1 rounded-full ${
+                            metric.value >= metric.benchmark ? 'bg-green-500' : 'bg-yellow-500'
+                          }`}
+                          style={{ width: `${Math.min((metric.value / metric.benchmark) * 100, 100)}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-gray-400 text-[10px] mt-1">
+                        Benchmark: {metric.benchmark}{metric.unit}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
