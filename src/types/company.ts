@@ -28,4 +28,23 @@ export interface CompanyOverview {
   currentRatio: number;
   priceToBook: number;
   priceToSales: number;
+}
+
+export interface CompanyFinancials {
+  sales_growth_rate?: number;
+  operating_profit_margin?: number;
+  equity_ratio?: number;
+  current_ratio?: number;
+  operating_profit_growth_rate?: number;
+  employee_growth_rate?: number;
+  debt_ratio?: number;
+  market_cap?: number;
+  per?: number;
+  pbr?: number;
+  dividend_yield?: number;
+}
+
+export interface Company {
+  overview: CompanyOverview;
+  financials?: CompanyFinancials;
 } 
