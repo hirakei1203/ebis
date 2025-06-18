@@ -8,7 +8,6 @@ export class InvestmentAnalyzer {
   }
 
   /**
-   * 投資可能性スコアを計算する
    * @returns 0-100のスコア
    */
   public calculateInvestmentScore(): number {
