@@ -37,14 +37,6 @@ export default function Navbar() {
                 >
                   Analysis History
                 </Link>
-                <Link 
-                  href="/settings" 
-                  className={`text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium ${
-                    pathname === '/settings' ? 'bg-gray-700 text-white' : ''
-                  }`}
-                >
-                  Settings
-                </Link>
               </>
             )}
 
