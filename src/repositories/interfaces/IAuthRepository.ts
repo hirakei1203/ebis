@@ -1,29 +1,29 @@
-// 認証リポジトリのインターフェース（Repository Layer）
+// Authentication repository interface (Repository Layer)
 
 import { User, LoginCredentials, RegisterCredentials, AuthResponse } from '@/types/auth';
 
 export interface IAuthRepository {
-  // ユーザー認証
+  // User authentication
   login(credentials: LoginCredentials): Promise<AuthResponse>;
   
-  // ユーザー登録
+  // User registration
   register(credentials: RegisterCredentials): Promise<AuthResponse>;
   
-  // ログアウト
+  // Logout
   logout(token: string): Promise<void>;
   
-  // トークン検証
+  // Token verification
   verifyToken(token: string): Promise<User | null>;
   
-  // ユーザー情報取得
+  // Get user information
   getUserById(id: string): Promise<User | null>;
   
-  // ユーザー情報更新
+  // Update user information
   updateUser(id: string, data: Partial<User>): Promise<User | null>;
   
-  // パスワードリセット
+  // Password reset
   requestPasswordReset(email: string): Promise<boolean>;
   
-  // パスワード変更
+  // Change password
   resetPassword(token: string, newPassword: string): Promise<boolean>;
 } 

@@ -73,7 +73,7 @@ export interface CompanyOverview {
   lastSplitDate: string;
 }
 
-// 株価データを取得
+// Get stock quote data
 export async function getStockQuote(symbol: string): Promise<StockQuote | null> {
   try {
     const response = await fetch(
@@ -86,7 +86,7 @@ export async function getStockQuote(symbol: string): Promise<StockQuote | null> 
     
     const data = await response.json();
     
-    // エラーレスポンスをチェック
+    // Check error response
     if (data['Error Message'] || data['Note']) {
       console.error('API Error:', data['Error Message'] || data['Note']);
       return null;
@@ -111,7 +111,7 @@ export async function getStockQuote(symbol: string): Promise<StockQuote | null> 
   }
 }
 
-// 時系列データを取得（日次）
+// Get time series data (daily)
 export async function getDailyTimeSeries(symbol: string): Promise<TimeSeriesData[]> {
   try {
     const response = await fetch(
@@ -124,7 +124,7 @@ export async function getDailyTimeSeries(symbol: string): Promise<TimeSeriesData
     
     const data = await response.json();
     
-    // エラーレスポンスをチェック
+    // Check error response
     if (data['Error Message'] || data['Note']) {
       console.error('API Error:', data['Error Message'] || data['Note']);
       return [];
@@ -136,7 +136,7 @@ export async function getDailyTimeSeries(symbol: string): Promise<TimeSeriesData
       return [];
     }
     
-    // データを配列に変換し、日付順にソート
+    // Convert data to array and sort by date
     const timeSeriesArray: TimeSeriesData[] = Object.entries(timeSeries)
       .map(([date, values]: [string, any]) => ({
         date,
@@ -147,7 +147,7 @@ export async function getDailyTimeSeries(symbol: string): Promise<TimeSeriesData
         volume: parseInt(values['5. volume'])
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .slice(-30); // 最新30日分のデータを取得
+      .slice(-30); // Get latest 30 days of data
     
     return timeSeriesArray;
   } catch (error) {
@@ -156,7 +156,7 @@ export async function getDailyTimeSeries(symbol: string): Promise<TimeSeriesData
   }
 }
 
-// 企業概要を取得
+// Get company overview
 export async function getCompanyOverview(symbol: string): Promise<CompanyOverview | null> {
   try {
     const response = await fetch(
@@ -169,13 +169,13 @@ export async function getCompanyOverview(symbol: string): Promise<CompanyOvervie
     
     const data = await response.json();
     
-    // エラーレスポンスをチェック
+    // Check error response
     if (data['Error Message'] || data['Note']) {
       console.error('API Error:', data['Error Message'] || data['Note']);
       return null;
     }
     
-    // データが空の場合
+    // If data is empty
     if (!data.Symbol) {
       console.error('No company overview data found');
       return null;
@@ -238,7 +238,7 @@ export async function getCompanyOverview(symbol: string): Promise<CompanyOvervie
   }
 }
 
-// 企業検索（シンボル検索）
+// Company search (symbol search)
 export async function searchCompanies(keywords: string): Promise<Array<{symbol: string, name: string}>> {
   try {
     const response = await fetch(
@@ -251,7 +251,7 @@ export async function searchCompanies(keywords: string): Promise<Array<{symbol: 
     
     const data = await response.json();
     
-    // エラーレスポンスをチェック
+    // Check error response
     if (data['Error Message'] || data['Note']) {
       console.error('API Error:', data['Error Message'] || data['Note']);
       return [];
@@ -272,7 +272,7 @@ export async function searchCompanies(keywords: string): Promise<Array<{symbol: 
   }
 }
 
-// デモデータ（APIキーが'demo'の場合の制限対応）
+// Demo data (for API key 'demo' limitation handling)
 export function getDemoData() {
   return {
     quote: {

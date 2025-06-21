@@ -1,19 +1,19 @@
 'use client';
 
-// 認証コンテキスト（Presentation Layer）
+// Authentication context (Presentation Layer)
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { authService } from '@/services/AuthService';
 import { User, AuthState, LoginCredentials, RegisterCredentials } from '@/types/auth';
 
-// アクション定義
+// Action definitions
 type AuthAction =
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_USER'; payload: User | null }
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'LOGOUT' };
 
-// 初期状態
+// Initial state
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
@@ -21,7 +21,7 @@ const initialState: AuthState = {
   error: null
 };
 
-// リデューサー
+// Reducer
 function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case 'SET_LOADING':
@@ -43,7 +43,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
   }
 }
 
-// コンテキスト型定義
+// Context type definition
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; message?: string; errors?: Record<string, string> }>;
   register: (credentials: RegisterCredentials) => Promise<{ success: boolean; message?: string; errors?: Record<string, string> }>;
@@ -52,14 +52,14 @@ interface AuthContextType extends AuthState {
   clearError: () => void;
 }
 
-// コンテキスト作成
+// Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// プロバイダーコンポーネント
+// Provider component
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // 初期化時に認証状態をチェック
+  // Check authentication status on initialization
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuthStatus();
   }, []);
 
-  // ログイン
+  // Login
   const login = async (credentials: LoginCredentials) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // ユーザー登録
+  // User registration
   const register = async (credentials: RegisterCredentials) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
@@ -127,19 +127,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // ログアウト
+  // Logout
   const logout = async () => {
     try {
       await authService.logout();
       dispatch({ type: 'LOGOUT' });
     } catch (error) {
       console.error('Logout failed:', error);
-      // ログアウトは失敗してもローカル状態をクリア
+      // Clear local state even if logout fails
       dispatch({ type: 'LOGOUT' });
     }
   };
 
-  // ユーザー情報更新
+  // Update user information
   const updateUser = async (data: Partial<User>) => {
     try {
       if (!state.user) return false;
@@ -156,7 +156,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // エラークリア
+  // Clear error
   const clearError = () => {
     dispatch({ type: 'SET_ERROR', payload: null });
   };
@@ -177,7 +177,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// カスタムフック
+// Custom hook
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

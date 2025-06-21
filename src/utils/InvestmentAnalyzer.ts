@@ -83,7 +83,7 @@ export class InvestmentAnalyzer {
   }
 
   /**
-   * リスクスコアを計算する
+   * Calculate risk score
    */
   private calculateRiskScore(): number {
     const { financials } = this.company;
@@ -91,17 +91,17 @@ export class InvestmentAnalyzer {
 
     let score = 100;
 
-    // 負債比率が高いほどリスクスコアを下げる
+    // Higher debt ratio lowers risk score
     if (financials.debt_ratio) {
       score -= Math.min(financials.debt_ratio / 2, 30);
     }
 
-    // 流動比率が低いほどリスクスコアを下げる
+    // Lower current ratio lowers risk score
     if (financials.current_ratio) {
       score -= Math.max(0, (2 - financials.current_ratio) * 20);
     }
 
-    // 営業利益率が低いほどリスクスコアを下げる
+    // Lower operating profit margin lowers risk score
     if (financials.operating_profit_margin) {
       score -= Math.max(0, (5 - financials.operating_profit_margin) * 10);
     }
@@ -142,16 +142,16 @@ export class InvestmentAnalyzer {
   }
 
   /**
-   * 投資推奨度を取得する
+   * Get investment recommendation
    */
   public getInvestmentRecommendation(): string {
     const score = this.calculateInvestmentScore();
     
-    if (score >= 80) return '強く推奨';
-    if (score >= 60) return '推奨';
-    if (score >= 40) return '中立';
-    if (score >= 20) return '注意';
-    return '非推奨';
+    if (score >= 80) return 'Strongly Recommended';
+    if (score >= 60) return 'Recommended';
+    if (score >= 40) return 'Neutral';
+    if (score >= 20) return 'Caution';
+    return 'Not Recommended';
   }
 
   /**

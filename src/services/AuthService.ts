@@ -1,4 +1,4 @@
-// 認証サービス（Service Layer）
+// Authentication service (Service Layer)
 
 import { IAuthRepository } from '@/repositories/interfaces/IAuthRepository';
 import { LocalStorageAuthRepository } from '@/repositories/LocalStorageAuthRepository';
@@ -8,37 +8,37 @@ export class AuthService {
   private authRepository: IAuthRepository;
 
   constructor(authRepository?: IAuthRepository) {
-    // デフォルトはローカルストレージ実装、将来的にAWS実装に切り替え可能
+    // Default to local storage implementation, can be switched to AWS implementation in the future
     this.authRepository = authRepository || new LocalStorageAuthRepository();
   }
 
-  // ログイン
+  // Login
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    // ビジネスロジック（必要に応じて）
+    // Business logic (if needed)
     const result = await this.authRepository.login(credentials);
     
     if (result.success && result.token) {
-      // ログイン成功時の追加処理
+      // Additional processing on successful login
       this.setAuthToken(result.token);
     }
     
     return result;
   }
 
-  // ユーザー登録
+  // User registration
   async register(credentials: RegisterCredentials): Promise<AuthResponse> {
-    // ビジネスロジック（必要に応じて）
+    // Business logic (if needed)
     const result = await this.authRepository.register(credentials);
     
     if (result.success && result.token) {
-      // 登録成功時の追加処理
+      // Additional processing on successful registration
       this.setAuthToken(result.token);
     }
     
     return result;
   }
 
-  // ログアウト
+  // Logout
   async logout(): Promise<void> {
     const token = this.getAuthToken();
     if (token) {
@@ -47,7 +47,7 @@ export class AuthService {
     }
   }
 
-  // 現在のユーザー取得
+  // Get current user
   async getCurrentUser(): Promise<User | null> {
     const token = this.getAuthToken();
     if (!token) return null;
@@ -55,28 +55,28 @@ export class AuthService {
     return await this.authRepository.verifyToken(token);
   }
 
-  // 認証状態確認
+  // Check authentication status
   async isAuthenticated(): Promise<boolean> {
     const user = await this.getCurrentUser();
     return user !== null;
   }
 
-  // ユーザー情報更新
+  // Update user information
   async updateUser(id: string, data: Partial<User>): Promise<User | null> {
     return await this.authRepository.updateUser(id, data);
   }
 
-  // パスワードリセット要求
+  // Request password reset
   async requestPasswordReset(email: string): Promise<boolean> {
     return await this.authRepository.requestPasswordReset(email);
   }
 
-  // パスワードリセット
+  // Reset password
   async resetPassword(token: string, newPassword: string): Promise<boolean> {
     return await this.authRepository.resetPassword(token, newPassword);
   }
 
-  // トークン管理（プライベートメソッド）
+  // Token management (private methods)
   private setAuthToken(token: string): void {
     if (typeof window !== 'undefined') {
       localStorage.setItem('ebis_auth_token', token);
@@ -96,11 +96,11 @@ export class AuthService {
     }
   }
 
-  // リポジトリ切り替え（AWS移行時に使用）
+  // Switch repository (for AWS migration)
   setRepository(repository: IAuthRepository): void {
     this.authRepository = repository;
   }
 }
 
-// シングルトンインスタンス
+// Singleton instance
 export const authService = new AuthService(); 

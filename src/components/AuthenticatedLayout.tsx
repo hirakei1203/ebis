@@ -9,7 +9,7 @@ interface AuthenticatedLayoutProps {
   children: React.ReactNode;
 }
 
-// 認証が不要なページのパス
+// Paths that don't require authentication
 const PUBLIC_PATHS = [
   '/',
   '/login',
@@ -20,15 +20,15 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
   const { user, isAuthenticated, logout, isLoading } = useAuth();
   const pathname = usePathname();
 
-  // 認証が不要なページかどうかをチェック
+  // Check if the current page doesn't require authentication
   const isPublicPath = PUBLIC_PATHS.includes(pathname);
 
-  // ログインページまたは登録ページの場合は、レイアウトを表示しない
+  // Don't show layout for login or register pages
   if (pathname === '/login' || pathname === '/register') {
     return <>{children}</>;
   }
 
-  // ローディング中
+  // Loading state
   if (isLoading && !isPublicPath) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -37,7 +37,7 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
     );
   }
 
-  // 認証が必要なページで未認証の場合はログインページにリダイレクト
+  // Redirect to login page if user is not authenticated on a protected page
   if (!isAuthenticated && !isPublicPath) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">

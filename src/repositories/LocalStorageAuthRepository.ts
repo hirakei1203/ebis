@@ -1,4 +1,4 @@
-// ローカルストレージ認証リポジトリ（開発用実装）
+// Local storage authentication repository (development implementation)
 
 import { IAuthRepository } from './interfaces/IAuthRepository';
 import { User, LoginCredentials, RegisterCredentials, AuthResponse } from '@/types/auth';
@@ -7,7 +7,7 @@ export class LocalStorageAuthRepository implements IAuthRepository {
   private readonly USERS_KEY = 'ebis_users';
   private readonly SESSIONS_KEY = 'ebis_sessions';
 
-  // ユーザーデータの初期化
+  // Initialize user data
   private initializeUsers(): void {
     if (typeof window === 'undefined') return;
     
@@ -49,8 +49,8 @@ export class LocalStorageAuthRepository implements IAuthRepository {
   }
 
   private hashPassword(password: string): string {
-    // 実際の実装では bcrypt などを使用
-    // ここでは簡単なハッシュ化（本番では使用しない）
+    // In actual implementation, use bcrypt etc.
+    // Simple hashing here (do not use in production)
     return btoa(password + 'ebis_salt');
   }
 
@@ -60,7 +60,7 @@ export class LocalStorageAuthRepository implements IAuthRepository {
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      // 入力検証
+      // Input validation
       if (!credentials.email || !credentials.password) {
         return {
           success: false,
@@ -83,7 +83,7 @@ export class LocalStorageAuthRepository implements IAuthRepository {
         };
       }
 
-      // デモ用：パスワードは 'password' または実際のハッシュ化されたパスワード
+      // Demo: Password is 'password' or actual hashed password
       const isValidPassword = credentials.password === 'password' || 
                              this.verifyPassword(credentials.password, credentials.password);
 
@@ -95,15 +95,15 @@ export class LocalStorageAuthRepository implements IAuthRepository {
         };
       }
 
-      // セッション作成
+      // Create session
       const token = this.generateToken();
       const session = {
         userId: user.id,
         token,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24時間
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
       };
 
-      // セッション保存
+      // Save session
       const sessions = JSON.parse(localStorage.getItem(this.SESSIONS_KEY) || '[]');
       sessions.push(session);
       localStorage.setItem(this.SESSIONS_KEY, JSON.stringify(sessions));
@@ -125,7 +125,7 @@ export class LocalStorageAuthRepository implements IAuthRepository {
 
   async register(credentials: RegisterCredentials): Promise<AuthResponse> {
     try {
-      // 入力検証
+      // Input validation
       const errors: Record<string, string> = {};
       
       if (!credentials.email) errors.email = 'Email is required';
@@ -151,7 +151,7 @@ export class LocalStorageAuthRepository implements IAuthRepository {
 
       const users = this.getUsers();
       
-      // 既存ユーザーチェック
+      // Check existing user
       if (users.find(u => u.email === credentials.email)) {
         return {
           success: false,
@@ -160,7 +160,7 @@ export class LocalStorageAuthRepository implements IAuthRepository {
         };
       }
 
-      // 新規ユーザー作成
+      // Create new user
       const newUser: User = {
         id: Date.now().toString(),
         email: credentials.email,
@@ -172,7 +172,7 @@ export class LocalStorageAuthRepository implements IAuthRepository {
       users.push(newUser);
       this.saveUsers(users);
 
-      // 自動ログイン
+      // Automatic login
       const loginResult = await this.login({
         email: credentials.email,
         password: credentials.password
@@ -262,7 +262,7 @@ export class LocalStorageAuthRepository implements IAuthRepository {
       
       if (!user) return false;
 
-      // 実際の実装では、メール送信処理を行う
+      // In actual implementation, perform email sending process
       console.log(`Password reset requested for: ${email}`);
       return true;
     } catch (error) {
@@ -273,7 +273,7 @@ export class LocalStorageAuthRepository implements IAuthRepository {
 
   async resetPassword(token: string, newPassword: string): Promise<boolean> {
     try {
-      // 実際の実装では、リセットトークンの検証を行う
+      // In actual implementation, perform reset token verification
       console.log(`Password reset with token: ${token}`);
       return true;
     } catch (error) {
