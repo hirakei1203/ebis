@@ -3,6 +3,8 @@ import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { getStockQuote, getDailyTimeSeries, getCompanyOverview, getDemoData, type StockQuote, type TimeSeriesData, type CompanyOverview } from '@/services/alphaVantageApi';
+import { InvestmentAnalyzer, type InvestmentScore } from '@/utils/InvestmentAnalyzer';
+import { InvestmentAnalysis } from '@/components/InvestmentAnalysis';
 
 // Market share data (simulated based on company sector)
 const getMarketShareData = (companyName: string) => [
@@ -22,19 +24,6 @@ const growthForecast = [
   { year: '2028', revenue: 132, profit: 21 }
 ];
 
-interface InvestmentScore {
-  category: string;
-  score: number;
-  maxScore: number;
-  description: string;
-  metrics?: {
-    name: string;
-    value: number;
-    benchmark: number;
-    unit: string;
-  }[];
-}
-
 export default function AnalysisResult() {
   const searchParams = useSearchParams();
   const companyName = searchParams.get('company') || 'Unknown';
@@ -42,7 +31,7 @@ export default function AnalysisResult() {
   
   const [activeTab, setActiveTab] = useState('finance');
   const [isLoading, setIsLoading] = useState(true);
-  const [investmentScores, setInvestmentScores] = useState<InvestmentScore[]>([]);
+  const [investmentScore, setInvestmentScore] = useState<InvestmentScore | null>(null);
   const [stockQuote, setStockQuote] = useState<StockQuote | null>(null);
   const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesData[]>([]);
   const [companyOverview, setCompanyOverview] = useState<CompanyOverview | null>(null);
@@ -66,12 +55,26 @@ export default function AnalysisResult() {
             setStockQuote(quote);
             setTimeSeriesData(timeSeries);
             setCompanyOverview(overview);
+            
+            // Calculate investment score using real data
+            if (overview && quote) {
+              const score = InvestmentAnalyzer.calculateInvestmentScore(overview, quote, timeSeries);
+              setInvestmentScore(score);
+            }
           } else {
             // Use demo data if API returns no results
             const demoData = getDemoData();
             setStockQuote(demoData.quote);
             setTimeSeriesData(demoData.timeSeries);
             setCompanyOverview(demoData.overview as CompanyOverview);
+            
+            // Calculate investment score with demo data
+            const score = InvestmentAnalyzer.calculateInvestmentScore(
+              demoData.overview as CompanyOverview,
+              demoData.quote,
+              demoData.timeSeries
+            );
+            setInvestmentScore(score);
           }
         } else {
           // Use demo data if no symbol provided
@@ -79,71 +82,19 @@ export default function AnalysisResult() {
           setStockQuote(demoData.quote);
           setTimeSeriesData(demoData.timeSeries);
           setCompanyOverview(demoData.overview as CompanyOverview);
+          
+          // Calculate investment score with demo data
+          const score = InvestmentAnalyzer.calculateInvestmentScore(
+            demoData.overview as CompanyOverview,
+            demoData.quote,
+            demoData.timeSeries
+          );
+          setInvestmentScore(score);
         }
         
-        // Simulate investment score calculation
+        // Simulate loading time
         await new Promise(resolve => setTimeout(resolve, 1500));
         
-        const scores: InvestmentScore[] = [
-          {
-            category: 'Financial Health',
-            score: 8.5,
-            maxScore: 10,
-            description: 'Strong balance sheet with low debt',
-            metrics: [
-              { name: 'P/E Ratio', value: companyOverview?.peRatio || 0, benchmark: 20, unit: '' },
-              { name: 'ROE', value: (companyOverview?.returnOnEquity || 0) * 100, benchmark: 12, unit: '%' },
-              { name: 'ROA', value: (companyOverview?.returnOnAssets || 0) * 100, benchmark: 5, unit: '%' },
-              { name: 'Debt/Equity', value: companyOverview?.debtToEquity || 0, benchmark: 1.5, unit: '' }
-            ]
-          },
-          {
-            category: 'Growth Potential',
-            score: 7.2,
-            maxScore: 10,
-            description: 'Moderate growth expected in core markets',
-            metrics: [
-              { name: 'Revenue Growth', value: (companyOverview?.quarterlyRevenueGrowth || 0) * 100, benchmark: 10, unit: '%' },
-              { name: 'EPS Growth', value: (companyOverview?.quarterlyEarningsGrowth || 0) * 100, benchmark: 8, unit: '%' },
-              { name: 'Profit Margin', value: (companyOverview?.profitMargin || 0) * 100, benchmark: 8, unit: '%' }
-            ]
-          },
-          {
-            category: 'Market Position',
-            score: 8.8,
-            maxScore: 10,
-            description: 'Leading position in key segments',
-            metrics: [
-              { name: 'Market Cap', value: (companyOverview?.marketCap || 0) / 1000000000, benchmark: 10, unit: 'B' },
-              { name: 'PEG Ratio', value: companyOverview?.pegRatio || 0, benchmark: 1.5, unit: '' },
-              { name: 'Dividend Yield', value: (companyOverview?.dividendYield || 0) * 100, benchmark: 2, unit: '%' }
-            ]
-          },
-          {
-            category: 'Risk Assessment',
-            score: 7.5,
-            maxScore: 10,
-            description: 'Well-diversified business model',
-            metrics: [
-              { name: 'Beta', value: companyOverview?.beta || 1, benchmark: 1, unit: '' },
-              { name: 'Operating Margin', value: (companyOverview?.operatingMargin || 0) * 100, benchmark: 15, unit: '%' },
-              { name: 'Current Ratio', value: companyOverview?.currentRatio || 0, benchmark: 1.5, unit: '' }
-            ]
-          },
-          {
-            category: 'Valuation',
-            score: 6.8,
-            maxScore: 10,
-            description: 'Fairly valued with some upside potential',
-            metrics: [
-              { name: 'Forward P/E', value: companyOverview?.forwardPE || 0, benchmark: 15, unit: '' },
-              { name: 'Price/Book', value: companyOverview?.priceToBook || 0, benchmark: 2, unit: '' },
-              { name: 'Price/Sales', value: companyOverview?.priceToSales || 0, benchmark: 2, unit: '' }
-            ]
-          }
-        ];
-        
-        setInvestmentScores(scores);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Failed to fetch company data. Please try again.');
@@ -154,94 +105,35 @@ export default function AnalysisResult() {
         setTimeSeriesData(demoData.timeSeries);
         setCompanyOverview(demoData.overview as CompanyOverview);
         
-        const scores: InvestmentScore[] = [
-          {
-            category: 'Financial Health',
-            score: 8.5,
-            maxScore: 10,
-            description: 'Strong balance sheet with low debt',
-            metrics: [
-              { name: 'P/E Ratio', value: companyOverview?.peRatio || 0, benchmark: 20, unit: '' },
-              { name: 'ROE', value: (companyOverview?.returnOnEquity || 0) * 100, benchmark: 12, unit: '%' },
-              { name: 'ROA', value: (companyOverview?.returnOnAssets || 0) * 100, benchmark: 5, unit: '%' },
-              { name: 'Debt/Equity', value: companyOverview?.debtToEquity || 0, benchmark: 1.5, unit: '' }
-            ]
-          },
-          {
-            category: 'Growth Potential',
-            score: 7.2,
-            maxScore: 10,
-            description: 'Moderate growth expected in core markets',
-            metrics: [
-              { name: 'Revenue Growth', value: (companyOverview?.quarterlyRevenueGrowth || 0) * 100, benchmark: 10, unit: '%' },
-              { name: 'EPS Growth', value: (companyOverview?.quarterlyEarningsGrowth || 0) * 100, benchmark: 8, unit: '%' },
-              { name: 'Profit Margin', value: (companyOverview?.profitMargin || 0) * 100, benchmark: 8, unit: '%' }
-            ]
-          },
-          {
-            category: 'Market Position',
-            score: 8.8,
-            maxScore: 10,
-            description: 'Leading position in key segments',
-            metrics: [
-              { name: 'Market Cap', value: (companyOverview?.marketCap || 0) / 1000000000, benchmark: 10, unit: 'B' },
-              { name: 'PEG Ratio', value: companyOverview?.pegRatio || 0, benchmark: 1.5, unit: '' },
-              { name: 'Dividend Yield', value: (companyOverview?.dividendYield || 0) * 100, benchmark: 2, unit: '%' }
-            ]
-          },
-          {
-            category: 'Risk Assessment',
-            score: 7.5,
-            maxScore: 10,
-            description: 'Well-diversified business model',
-            metrics: [
-              { name: 'Beta', value: companyOverview?.beta || 1, benchmark: 1, unit: '' },
-              { name: 'Operating Margin', value: (companyOverview?.operatingMargin || 0) * 100, benchmark: 15, unit: '%' },
-              { name: 'Current Ratio', value: companyOverview?.currentRatio || 0, benchmark: 1.5, unit: '' }
-            ]
-          },
-          {
-            category: 'Valuation',
-            score: 6.8,
-            maxScore: 10,
-            description: 'Fairly valued with some upside potential',
-            metrics: [
-              { name: 'Forward P/E', value: companyOverview?.forwardPE || 0, benchmark: 15, unit: '' },
-              { name: 'Price/Book', value: companyOverview?.priceToBook || 0, benchmark: 2, unit: '' },
-              { name: 'Price/Sales', value: companyOverview?.priceToSales || 0, benchmark: 2, unit: '' }
-            ]
-          }
-        ];
-        setInvestmentScores(scores);
+        // Calculate investment score with demo data
+        const score = InvestmentAnalyzer.calculateInvestmentScore(
+          demoData.overview as CompanyOverview,
+          demoData.quote,
+          demoData.timeSeries
+        );
+        setInvestmentScore(score);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [companyName, symbol]);
+  }, [symbol]);
 
   // Save analysis to history when data is loaded
   useEffect(() => {
-    if (!isLoading && investmentScores.length > 0) {
+    if (!isLoading && investmentScore) {
       const saveToHistory = () => {
         try {
-          const overallScore = calculateOverallScore();
-          const recommendation = getRecommendation(overallScore);
-          
-          const analysisResult = {
+          const historyItem = {
             id: Date.now().toString(),
             companyName,
-            symbol: symbol || undefined,
-            sector: companyOverview?.sector,
-            industry: companyOverview?.industry,
+            symbol,
+            searchDate: new Date().toISOString(),
             currentPrice: stockQuote?.price,
             priceChange: stockQuote?.change,
             priceChangePercent: stockQuote?.changePercent,
-            investmentScores,
-            overallScore,
-            recommendation: recommendation.text,
-            recommendationColor: recommendation.color,
+            investmentScore,
             analysisDate: new Date(),
             isFavorite: false
           };
@@ -259,10 +151,10 @@ export default function AnalysisResult() {
 
           if (existingIndex >= 0) {
             // Update existing analysis
-            history[existingIndex] = analysisResult;
+            history[existingIndex] = historyItem;
           } else {
             // Add new analysis to the beginning
-            history.unshift(analysisResult);
+            history.unshift(historyItem);
             // Keep only the latest 50 analyses
             history = history.slice(0, 50);
           }
@@ -275,45 +167,20 @@ export default function AnalysisResult() {
 
       saveToHistory();
     }
-  }, [isLoading, investmentScores, companyName, symbol, stockQuote, companyOverview]);
+  }, [isLoading, investmentScore, companyName, symbol, stockQuote, companyOverview]);
 
-  const calculateOverallScore = () => {
-    if (investmentScores.length === 0) return 0;
-    const totalScore = investmentScores.reduce((sum, score) => sum + score.score, 0);
-    return Math.round((totalScore / investmentScores.length) * 10) / 10;
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 8) return 'text-green-400';
-    if (score >= 6) return 'text-yellow-400';
-    return 'text-red-400';
-  };
-
-  const getRecommendation = (overallScore: number) => {
-    if (overallScore >= 8) return { text: 'Strong Buy', color: 'bg-green-600', description: 'Excellent investment opportunity with strong fundamentals' };
-    if (overallScore >= 7) return { text: 'Buy', color: 'bg-green-500', description: 'Good investment opportunity with solid prospects' };
-    if (overallScore >= 6) return { text: 'Hold', color: 'bg-yellow-500', description: 'Moderate investment with balanced risk-reward' };
-    if (overallScore >= 5) return { text: 'Weak Hold', color: 'bg-orange-500', description: 'Below average investment with some concerns' };
-    return { text: 'Sell', color: 'bg-red-500', description: 'Poor investment opportunity with significant risks' };
-  };
-
-  // Convert time series data for chart
-  const chartData = timeSeriesData.map(item => ({
-    date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    price: item.close,
-    volume: item.volume
-  }));
-
-  // Create financial metrics data from company overview
   const getFinancialMetrics = () => {
     if (!companyOverview) return [];
     
     return [
-      { metric: 'P/E Ratio', value: companyOverview.peRatio || 0, benchmark: 20 },
-      { metric: 'Profit Margin', value: (companyOverview.profitMargin || 0) * 100, benchmark: 8 },
-      { metric: 'ROE', value: (companyOverview.returnOnEquity || 0) * 100, benchmark: 12 },
-      { metric: 'ROA', value: (companyOverview.returnOnAssets || 0) * 100, benchmark: 5 },
-      { metric: 'EPS', value: companyOverview.eps || 0, benchmark: 3 }
+      { name: 'Market Cap', value: companyOverview.marketCap ? `$${(companyOverview.marketCap / 1000000000).toFixed(1)}B` : 'N/A' },
+      { name: 'P/E Ratio', value: companyOverview.peRatio || 'N/A' },
+      { name: 'P/B Ratio', value: companyOverview.priceToBook || 'N/A' },
+      { name: 'Dividend Yield', value: companyOverview.dividendYield ? `${(companyOverview.dividendYield * 100).toFixed(2)}%` : 'N/A' },
+      { name: 'ROE', value: companyOverview.returnOnEquity ? `${(companyOverview.returnOnEquity * 100).toFixed(2)}%` : 'N/A' },
+      { name: 'ROA', value: companyOverview.returnOnAssets ? `${(companyOverview.returnOnAssets * 100).toFixed(2)}%` : 'N/A' },
+      { name: 'Profit Margin', value: companyOverview.profitMargin ? `${(companyOverview.profitMargin * 100).toFixed(2)}%` : 'N/A' },
+      { name: 'Beta', value: companyOverview.beta || 'N/A' }
     ];
   };
 
@@ -331,8 +198,6 @@ export default function AnalysisResult() {
     );
   }
 
-  const overallScore = calculateOverallScore();
-  const recommendation = getRecommendation(overallScore);
   const marketShareData = getMarketShareData(companyName);
   const financialMetrics = getFinancialMetrics();
 
@@ -363,63 +228,12 @@ export default function AnalysisResult() {
         </div>
       )}
       
-      {/* Investment Score Summary */}
-      <div className="bg-gray-800 rounded-lg shadow-lg mb-6 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-semibold">Investment Score</h2>
-          <div className="text-right">
-            <div className={`text-3xl font-bold ${getScoreColor(overallScore)}`}>
-              {overallScore}/10
-            </div>
-            <div className={`inline-block px-3 py-1 rounded-full text-white text-sm font-medium ${recommendation.color}`}>
-              {recommendation.text}
-            </div>
-          </div>
+      {/* Investment Analysis */}
+      {investmentScore && (
+        <div className="mb-6">
+          <InvestmentAnalysis score={investmentScore} />
         </div>
-        <p className="text-gray-300 mb-4">{recommendation.description}</p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          {investmentScores.map((score, index) => (
-            <div key={index} className="bg-gray-700/50 p-4 rounded-lg">
-              <h4 className="text-sm font-medium text-gray-300 mb-2">{score.category}</h4>
-              <div className={`text-xl font-bold ${getScoreColor(score.score)}`}>
-                {score.score}/10
-              </div>
-              <div className="w-full bg-gray-600 rounded-full h-2 mt-2">
-                <div 
-                  className="bg-blue-500 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${(score.score / score.maxScore) * 100}%` }}
-                ></div>
-              </div>
-              <p className="text-xs text-gray-400 mt-2">{score.description}</p>
-              
-              {score.metrics && (
-                <div className="mt-4 space-y-2">
-                  {score.metrics.map((metric, mIndex) => (
-                    <div key={mIndex} className="text-xs">
-                      <div className="flex justify-between text-gray-300">
-                        <span>{metric.name}</span>
-                        <span>{metric.value.toFixed(2)}{metric.unit}</span>
-                      </div>
-                      <div className="w-full bg-gray-600 rounded-full h-1 mt-1">
-                        <div 
-                          className={`h-1 rounded-full ${
-                            metric.value >= metric.benchmark ? 'bg-green-500' : 'bg-yellow-500'
-                          }`}
-                          style={{ width: `${Math.min((metric.value / metric.benchmark) * 100, 100)}%` }}
-                        ></div>
-                      </div>
-                      <div className="text-gray-400 text-[10px] mt-1">
-                        Benchmark: {metric.benchmark}{metric.unit}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
 
       <div className="bg-gray-800 rounded-lg shadow-lg">
         {/* Tab Navigation */}
@@ -467,10 +281,14 @@ export default function AnalysisResult() {
               
               {/* Stock Price Chart */}
               <div className="bg-gray-700/50 p-5 rounded-lg">
-                <h4 className="text-lg font-medium mb-3">Stock Price Trend ({chartData.length} Days)</h4>
+                <h4 className="text-lg font-medium mb-3">Stock Price Trend ({timeSeriesData.length} Days)</h4>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData}>
+                    <LineChart data={timeSeriesData.map(item => ({
+                      date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                      price: item.close,
+                      volume: item.volume
+                    }))}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="date" stroke="#9CA3AF" />
                       <YAxis stroke="#9CA3AF" />
@@ -509,7 +327,7 @@ export default function AnalysisResult() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={financialMetrics}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                        <XAxis dataKey="metric" stroke="#9CA3AF" />
+                        <XAxis dataKey="name" stroke="#9CA3AF" />
                         <YAxis stroke="#9CA3AF" />
                         <Tooltip 
                           contentStyle={{ 
@@ -520,7 +338,6 @@ export default function AnalysisResult() {
                         />
                         <Legend />
                         <Bar dataKey="value" fill="#3B82F6" name="Company" />
-                        <Bar dataKey="benchmark" fill="#6B7280" name="Industry Average" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -534,22 +351,12 @@ export default function AnalysisResult() {
                   <h4 className="text-lg font-medium mb-3">Company Overview</h4>
                   <p className="text-gray-300 mb-4">{companyOverview.description}</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-400">Market Cap</p>
-                      <p className="font-medium">${(companyOverview.marketCap / 1000000000).toFixed(1)}B</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">P/E Ratio</p>
-                      <p className="font-medium">{companyOverview.peRatio?.toFixed(2) || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">EPS</p>
-                      <p className="font-medium">${companyOverview.eps?.toFixed(2) || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Dividend Yield</p>
-                      <p className="font-medium">{(companyOverview.dividendYield * 100)?.toFixed(2) || '0'}%</p>
-                    </div>
+                    {financialMetrics.map((metric, index) => (
+                      <div key={index}>
+                        <p className="text-sm text-gray-400">{metric.name}</p>
+                        <p className="font-medium">{metric.value}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
