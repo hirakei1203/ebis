@@ -127,7 +127,7 @@ export class InvestmentAnalyzer {
       factors++;
     }
 
-    // PEG比率（成長率に対するPE比率）
+    // P/E ratio
     if (overview.pegRatio > 0) {
       if (overview.pegRatio < 1.0) score += 25;
       else if (overview.pegRatio < 1.5) score += 20;
