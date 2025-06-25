@@ -139,9 +139,6 @@ export class InvestmentAnalyzer {
     return factors > 0 ? Math.round(score / factors) : 50;
   }
 
-  /**
-   * 割安性スコア計算
-   */
   private static calculateValuation(overview: CompanyOverview): number {
     let score = 0;
     let factors = 0;
