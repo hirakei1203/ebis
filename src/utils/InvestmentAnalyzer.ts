@@ -143,7 +143,7 @@ export class InvestmentAnalyzer {
     let score = 0;
     let factors = 0;
 
-    // PER（株価収益率）
+    // PER
     if (overview.peRatio > 0) {
       if (overview.peRatio < 10) score += 25;
       else if (overview.peRatio < 15) score += 20;
