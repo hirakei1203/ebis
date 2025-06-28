@@ -153,7 +153,7 @@ export class InvestmentAnalyzer {
       factors++;
     }
 
-    // PBR（株価純資産倍率）
+    // PBR
     if (overview.priceToBook > 0) {
       if (overview.priceToBook < 1.0) score += 25;
       else if (overview.priceToBook < 1.5) score += 20;
