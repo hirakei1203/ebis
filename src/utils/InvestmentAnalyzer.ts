@@ -163,7 +163,7 @@ export class InvestmentAnalyzer {
       factors++;
     }
 
-    // PSR（株価売上高倍率）
+    // PSR
     if (overview.priceToSales > 0) {
       if (overview.priceToSales < 1.0) score += 25;
       else if (overview.priceToSales < 2.0) score += 20;
