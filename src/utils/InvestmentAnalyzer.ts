@@ -190,7 +190,7 @@ export class InvestmentAnalyzer {
   private static calculateRisk(overview: CompanyOverview, timeSeries: TimeSeriesData[]): number {
     let score = 100; // リスクスコアは100から減点方式
 
-    // ベータ値（市場との連動性）
+    // beta
     if (overview.beta > 0) {
       if (overview.beta > 2.0) score -= 30;
       else if (overview.beta > 1.5) score -= 20;
