@@ -184,9 +184,6 @@ export class InvestmentAnalyzer {
     return factors > 0 ? Math.round(score / factors) : 50;
   }
 
-  /**
-   * リスクスコア計算
-   */
   private static calculateRisk(overview: CompanyOverview, timeSeries: TimeSeriesData[]): number {
     let score = 100; // リスクスコアは100から減点方式
 
