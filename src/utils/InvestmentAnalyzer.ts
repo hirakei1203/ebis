@@ -173,7 +173,6 @@ export class InvestmentAnalyzer {
       factors++;
     }
 
-    // 配当利回り
     if (overview.dividendYield > 0) {
       if (overview.dividendYield > 0.04) score += 20;
       else if (overview.dividendYield > 0.02) score += 15;
