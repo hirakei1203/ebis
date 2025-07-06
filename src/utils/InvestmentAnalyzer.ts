@@ -194,7 +194,6 @@ export class InvestmentAnalyzer {
       // ベータ1.0以下は減点なし
     }
 
-    // 株価ボラティリティ（過去30日間）
     if (timeSeries.length >= 5) {
       const prices = timeSeries.map(ts => ts.close);
       const volatility = this.calculateVolatility(prices);
