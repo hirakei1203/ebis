@@ -191,7 +191,6 @@ export class InvestmentAnalyzer {
       if (overview.beta > 2.0) score -= 30;
       else if (overview.beta > 1.5) score -= 20;
       else if (overview.beta > 1.2) score -= 10;
-      // ベータ1.0以下は減点なし
     }
 
     if (timeSeries.length >= 5) {
